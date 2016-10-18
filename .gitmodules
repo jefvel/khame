@@ -2,3 +2,6 @@
 	path = Kha
 	url = ../Kha
 	branch = master
+[submodule "Libraries/kek"]
+	path = Libraries/kek
+	url = https://github.com/jefvel/kek.git

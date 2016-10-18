@@ -1,5 +1,6 @@
-let project = new Project('Empty');
+let project = new Project('');
 
+project.addLibrary('kek');
 project.addSources('Sources');
 
 resolve(project);
