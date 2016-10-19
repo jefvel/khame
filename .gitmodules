@@ -1,7 +1,6 @@
 [submodule "Kha"]
 	path = Kha
-	url = ../Kha
-	branch = master
+	url = https://github.com/KTXSoftware/Kha
 [submodule "Libraries/kek"]
 	path = Libraries/kek
 	url = https://github.com/jefvel/kek.git
