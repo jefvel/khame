@@ -1,6 +1,6 @@
-let project = new Project('');
+let project = new Project('khame');
 
-project.addLibrary('kek');
+project.addShaders('Shaders');
 project.addSources('Sources');
 
 resolve(project);
