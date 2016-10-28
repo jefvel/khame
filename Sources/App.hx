@@ -10,10 +10,14 @@ import kha.graphics4.IndexBuffer;
 import kha.graphics4.PipelineState;
 import kha.graphics4.VertexData;
 import kha.graphics4.Usage;
+import kek.physics.SpringSystem;
 
 class App {
 	var pipeline:PipelineState;
+	var springs:SpringSystem;
+
 	public function new() {
+		springs = new SpringSystem();
 		System.notifyOnRender(render);
 		Scheduler.addFrameTask(update, 0);
 		pipeline = new PipelineState();
