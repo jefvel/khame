@@ -29,6 +29,12 @@ class App {
 		pipeline.depthWrite = true;
 		pipeline.depthMode = kha.graphics4.CompareMode.LessEqual;
 		pipeline.compile();
+		var mouse = kha.input.Mouse.get();
+		mouse.notify(mouseDown, null, null, null);
+	}
+	
+	function mouseDown(x:Int, y:Int, i:Int) {
+		trace('$x, $y, $i');
 	}
 
 	function update(): Void {
