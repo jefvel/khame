@@ -35,6 +35,7 @@ class App {
 	}
 	
 	var friction:Float = 0.9;
+	var firstdown:Bool = false;
 	var mdown = false;
 	var moveX:Float = 0;
 	var moveY:Float = 0;
@@ -43,10 +44,12 @@ class App {
 	
 	function mouseMove(x:Int, y:Int, dx:Int, dy:Int) {
 		trace('Mouse: $x, $y. Move: $dx, $dy');
-		if(mdown) {
+		if(mdown && !firstdown) {
 			moveX += dx;
 			moveY += dy;
 		}
+		
+		firstdown = false;
 	}
 	
 	function mouseUp(x:Int, y:Int, i:Int) {
@@ -54,6 +57,7 @@ class App {
 		kha.SystemImpl.unlockMouse();
 		mouse.showSystemCursor();
 		mdown = false;
+		firstdown = false;
 	}
 	
 	function mouseDown(x:Int, y:Int, i:Int) {
@@ -61,6 +65,7 @@ class App {
 		kha.SystemImpl.lockMouse();
 		mouse.hideSystemCursor();
 		mdown = true;
+		firstdown = true;
 	}
 
 	function update(): Void {
@@ -82,7 +87,8 @@ class App {
 		}
 		
 		//g2.setPipeline(pipeline);
-		g2.clear(kha.Color.fromFloats(0.2, 0.4, 0.7));
+		g2.clear(kha.Color.White); 
+		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, 20 + x, 20 + y, 3);
 		g2.end();
 		//g2.begin(true, kha.Color.fromFloats(0.2, 0.4, 0.6));
