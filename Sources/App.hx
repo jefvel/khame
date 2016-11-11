@@ -32,6 +32,29 @@ class App {
 		pipeline.compile();
 		mouse = kha.input.Mouse.get();
 		mouse.notify(mouseDown, mouseUp, mouseMove, null);
+		
+		var btn = js.Browser.document.createButtonElement();
+		btn.textContent = "Reset";
+		btn.style.position = 'absolute';
+		btn.style.bottom = "20px";
+		btn.style.left = "20px";
+		
+		btn.className = 'btn btn-success';
+		btn.onclick = function(){
+			x = 0;
+			y = 0;
+		}
+		
+		var link = js.Browser.document.createLinkElement();
+		link.id = "style";
+		link.rel = "stylesheet";
+		link.type= "text/css";
+		link.media = "all";
+		link.href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
+		js.Browser.document.head.appendChild(link);
+		link.onload = function() {
+			js.Browser.document.body.appendChild(btn);
+		};
 	}
 	
 	var friction:Float = 0.9;
