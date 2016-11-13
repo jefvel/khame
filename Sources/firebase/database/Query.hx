@@ -1,13 +1,5 @@
 package firebase.database;
 
-@:enum
-abstract EventType(String) {
-	var value = "value";
-	var child_added = "child_added";
-	var child_changed = "child_changed";
-	var child_removed = "child_removed";
-	var child_moved = "child_moved";
-}
 
 @native("firebase.database.Query") extern class Query {
 	public var ref:Reference;
@@ -20,7 +12,7 @@ abstract EventType(String) {
 	
 	public function off(?eventType:EventType, ?callback:DataSnapshot -> Void, ?context:Dynamic):Void;
 	public function on(?eventType:EventType, callback:DataSnapshot -> String -> Void, ?cancelCallbackContext:Dynamic, ?context:Dynamic):DataSnapshot;
-	public function once(?eventType:EventType, successCallback:DataSnapshot -> String -> Void, ?failureCallbackOrContext:Dynamic, ?context:Dynamic):firebase.Promise<Dynamic>;
+	public function once(?eventType:EventType, ?successCallback:DataSnapshot -> String -> Void, ?failureCallbackOrContext:Dynamic, ?context:Dynamic):firebase.Promise<Dynamic>;
 	
 	public function orderByChild(path:String):Query;
 	public function orderByKey():Query;

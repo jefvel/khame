@@ -17,14 +17,19 @@ class App {
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
 	
-	var userName = null;
 	var userAvatar:js.html.ImageElement;
 	var user:firebase.User;
 	
 	var font:kha.Font;
+	var ui:game.UI;
+	
+	var gameState:game.GameState;
+	
+	var inited = false;
 	
 	public function new() {
 		userAvatar = cast js.Browser.document.getElementById("avatar-img");
+		gameState = new game.GameState();
 		
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
@@ -41,8 +46,6 @@ class App {
 		pipeline.compile();
 		mouse = kha.input.Mouse.get();
 		
-		mouse.notify(mouseDown, mouseUp, mouseMove, null);
-		
 		var config = {
 			apiKey: "AIzaSyDNW3ithvOf417WyzGUJl5bY30S7B_IH98",
 			authDomain: "christmas2016-2e122.firebaseapp.com",
@@ -52,7 +55,6 @@ class App {
 		};
 		
 		var app = firebase.Firebase.initializeApp(config);
-		
 		
 		firebase.Firebase.auth().onAuthStateChanged(function(user) {
 			this.user = user;
@@ -64,29 +66,35 @@ class App {
 				app.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider());
 			#end
 			
-			}else {
+			} else {
+				gameState.userId = user.uid;
+				
 				var email = user.email;
 				var db = app.database();
 				
-				if(user.displayName != null){
-					userName = user.displayName;
+				if(user.displayName != null) {
+					gameState.userName = user.displayName;
 				}else{
-					userName = generateName();
+					gameState.userName = generateName();
 				}
 				
 				var date = Date.now().toString();
-				db.ref("hej").set(date).then(function(e) {
-					trace('Set value');
-				});
+				
+				gameState.loadState();
 				
 				updateAvatar();
+				
+				if(!inited){
+					mouse.notify(mouseDown, mouseUp, mouseMove, null);
+				}
+				inited = true;
 			}
 		});
 		
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
+			ui = new game.UI(this.font, gameState);
 		});
-		
 		
 		updateAvatar();
 	}
@@ -98,8 +106,8 @@ class App {
 	function updateAvatar(){
 		var email;
 		
-		if(userName != null) {
-			email = userName;
+		if(gameState.userName != null) {
+			email = gameState.userName;
 			userAvatar.src = 'https://api.adorable.io/avatars/64/$email.io';
 			
 			if(user.photoURL != null) {
@@ -113,7 +121,6 @@ class App {
 		}
 	}
 	
-
 	var friction:Float = 0.9;
 	var firstdown:Bool = false;
 	var mdown = false;
@@ -141,6 +148,7 @@ class App {
 	
 	function mouseDown(x:Int, y:Int, i:Int) {
 		kha.SystemImpl.lockMouse();
+		gameState.addCredits();
 		mouse.hideSystemCursor();
 		mdown = true;
 		firstdown = true;
@@ -154,19 +162,6 @@ class App {
 		var g2 = framebuffer.g2;
 		g2.begin();
 		g2.clear(kha.Color.White); 
-		
-		if(user != null && font != null) {
-			g2.font = font;
-			g2.fontSize = 24;
-			g2.color = kha.Color.Black;
-			var name = "";
-			if(userName != null){
-				name = userName;
-			}
-			
-			g2.drawString(name, 64 + 20 + 20, framebuffer.height - 24 - 20 - 32);
-		}
-		
 		g2.color = kha.Color.White;
 		
 		y += (moveY);
@@ -184,6 +179,11 @@ class App {
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, 20 + x, 20 + y, 3);
 		g2.end();
+		
+		if(ui != null) {
+			ui.render(framebuffer);
+		}
+		
 		//g2.begin(true, kha.Color.fromFloats(0.2, 0.4, 0.6));
 		//g2.end();
 	}
