@@ -46,8 +46,6 @@ class App {
 		var app = firebase.Firebase.initializeApp(config);
 		
 		
-		firebase.database.Database.enableLogging(false);
-		
 		firebase.Firebase.auth().onAuthStateChanged(function(user) {
 			this.user = user;
 			if(user == null) {
