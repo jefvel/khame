@@ -21,6 +21,7 @@ class App {
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
 		Scheduler.addFrameTask(update, 0);
+		
 		pipeline = new PipelineState();
 		var layout = new VertexStructure();
 		layout.add("pos", VertexData.Float3);
@@ -31,31 +32,48 @@ class App {
 		pipeline.depthMode = kha.graphics4.CompareMode.LessEqual;
 		pipeline.compile();
 		mouse = kha.input.Mouse.get();
+		
 		mouse.notify(mouseDown, mouseUp, mouseMove, null);
 		
-		var btn = js.Browser.document.createButtonElement();
-		btn.textContent = "Reset";
-		btn.style.position = 'absolute';
-		btn.style.bottom = "20px";
-		btn.style.left = "20px";
-		
-		btn.className = 'btn btn-success';
-		btn.onclick = function(){
-			x = 0;
-			y = 0;
-		}
-		
-		var link = js.Browser.document.createLinkElement();
-		link.id = "style";
-		link.rel = "stylesheet";
-		link.type= "text/css";
-		link.media = "all";
-		link.href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-		js.Browser.document.head.appendChild(link);
-		link.onload = function() {
-			js.Browser.document.body.appendChild(btn);
+		var config = {
+			apiKey: "AIzaSyDNW3ithvOf417WyzGUJl5bY30S7B_IH98",
+			authDomain: "christmas2016-2e122.firebaseapp.com",
+			databaseURL: "https://christmas2016-2e122.firebaseio.com",
+			storageBucket: "christmas2016-2e122.appspot.com",
+			messagingSenderId: "819275584692"
 		};
+		
+		var app = firebase.Firebase.initializeApp(config);
+		
+		
+		firebase.database.Database.enableLogging(false);
+		
+		firebase.Firebase.auth().onAuthStateChanged(function(user) {
+			this.user = user;
+			if(user == null) {
+				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
+			}else {
+				var email = user.email;
+				var db = app.database();
+				
+				
+				var date = Date.now().toString();
+				db.ref("hej").set(date).then(function(e) {
+					trace('Set value');
+				});
+				
+				trace('Logged in as $email');
+			}
+		});
+		
+		kha.Assets.loadEverything(function() {
+			this.font = kha.Assets.fonts.Archive;
+		});
 	}
+	
+	var user:firebase.User;
+	
+	var font:kha.Font;
 	
 	var friction:Float = 0.9;
 	var firstdown:Bool = false;
@@ -66,7 +84,7 @@ class App {
 	var y:Float = 0;
 	
 	function mouseMove(x:Int, y:Int, dx:Int, dy:Int) {
-		trace('Mouse: $x, $y. Move: $dx, $dy');
+		//trace('Mouse: $x, $y. Move: $dx, $dy');
 		if(mdown && !firstdown) {
 			moveX += dx;
 			moveY += dy;
@@ -76,7 +94,6 @@ class App {
 	}
 	
 	function mouseUp(x:Int, y:Int, i:Int) {
-		trace('Up: $x, $y, $i');
 		kha.SystemImpl.unlockMouse();
 		mouse.showSystemCursor();
 		mdown = false;
@@ -84,7 +101,6 @@ class App {
 	}
 	
 	function mouseDown(x:Int, y:Int, i:Int) {
-		trace('Down: $x, $y, $i');
 		kha.SystemImpl.lockMouse();
 		mouse.hideSystemCursor();
 		mdown = true;
@@ -92,12 +108,23 @@ class App {
 	}
 
 	function update(): Void {
-		
+		springs.update();
 	}
 
 	function render(framebuffer: Framebuffer): Void {		
 		var g2 = framebuffer.g2;
 		g2.begin();
+		g2.clear(kha.Color.White); 
+		
+		if(user != null && font != null) {
+			g2.font = font;
+			g2.fontSize = 24;
+			g2.color = kha.Color.Black;
+			g2.drawString(user.email, 100, 100);
+		}
+		
+		g2.color = kha.Color.White;
+		
 		y += (moveY);
 		x += (moveX);
 		
@@ -110,7 +137,6 @@ class App {
 		}
 		
 		//g2.setPipeline(pipeline);
-		g2.clear(kha.Color.White); 
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, 20 + x, 20 + y, 3);
 		g2.end();
