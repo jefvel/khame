@@ -1,11 +1,11 @@
 package firebase;
 
 @native("firebase.User") extern class User {
-	public var displayName:String;
+	public var displayName(default, null):String;
 	public var email:String;
 	public var emailVerified:Bool;
 	public var isAnonymous:Bool;
-	public var photoUrl:String;
+	public var photoURL:String;
 	public var providerData:Array<Dynamic>;
 	public var providerId:String;
 	public var refreshToken:String;

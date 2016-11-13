@@ -16,8 +16,16 @@ class App {
 	var pipeline:PipelineState;
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
-
+	
+	var userName = null;
+	var userAvatar:js.html.ImageElement;
+	var user:firebase.User;
+	
+	var font:kha.Font;
+	
 	public function new() {
+		userAvatar = cast js.Browser.document.getElementById("avatar-img");
+		
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
 		Scheduler.addFrameTask(update, 0);
@@ -49,30 +57,63 @@ class App {
 		firebase.Firebase.auth().onAuthStateChanged(function(user) {
 			this.user = user;
 			if(user == null) {
+			
+			#if html5debug
 				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
+			#else
+				app.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider());
+			#end
+			
 			}else {
 				var email = user.email;
 				var db = app.database();
 				
+				if(user.displayName != null){
+					userName = user.displayName;
+				}else{
+					userName = generateName();
+				}
 				
 				var date = Date.now().toString();
 				db.ref("hej").set(date).then(function(e) {
 					trace('Set value');
 				});
 				
-				trace('Logged in as $email');
+				updateAvatar();
 			}
 		});
 		
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 		});
+		
+		
+		updateAvatar();
 	}
 	
-	var user:firebase.User;
+	function generateName() {
+		return "Elf Boy";
+	}
 	
-	var font:kha.Font;
+	function updateAvatar(){
+		var email;
+		
+		if(userName != null) {
+			email = userName;
+			userAvatar.src = 'https://api.adorable.io/avatars/64/$email.io';
+			
+			if(user.photoURL != null) {
+				userAvatar.src = user.photoURL;
+			}
+			
+			userAvatar.style.display = "block";
+		}else{
+			userAvatar.src = "";
+			userAvatar.style.display = "none";
+		}
+	}
 	
+
 	var friction:Float = 0.9;
 	var firstdown:Bool = false;
 	var mdown = false;
@@ -118,7 +159,12 @@ class App {
 			g2.font = font;
 			g2.fontSize = 24;
 			g2.color = kha.Color.Black;
-			g2.drawString(user.email, 100, 100);
+			var name = "";
+			if(userName != null){
+				name = userName;
+			}
+			
+			g2.drawString(name, 64 + 20 + 20, framebuffer.height - 24 - 20 - 32);
 		}
 		
 		g2.color = kha.Color.White;
