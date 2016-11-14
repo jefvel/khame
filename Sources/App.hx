@@ -91,6 +91,7 @@ class App {
 			}
 		});
 		
+		
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui = new game.UI(this.font, gameState);
@@ -98,12 +99,12 @@ class App {
 		
 		updateAvatar();
 	}
-	
+	var img:kha.Image;
 	function generateName() {
 		return "Elf Boy";
 	}
 	
-	function updateAvatar(){
+	function updateAvatar() {
 		var email;
 		
 		if(gameState.userName != null) {
@@ -114,7 +115,13 @@ class App {
 				userAvatar.src = user.photoURL;
 			}
 			
-			userAvatar.style.display = "block";
+			kha.Assets.loadImageFromPath(userAvatar.src, true,
+			function(image) {
+				this.img = image;
+			});
+
+			
+			//userAvatar.style.display = "block";
 		}else{
 			userAvatar.src = "";
 			userAvatar.style.display = "none";
@@ -183,6 +190,14 @@ class App {
 		if(ui != null) {
 			ui.render(framebuffer);
 		}
+		
+		if(img != null) {
+			g2.begin(false);
+			g2.color = kha.Color.White;
+			g2.drawScaledImage(img, 20, framebuffer.height - 20 - 64, 64, 64);
+			g2.end();
+		}
+		
 		
 		//g2.begin(true, kha.Color.fromFloats(0.2, 0.4, 0.6));
 		//g2.end();

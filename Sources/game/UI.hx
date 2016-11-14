@@ -34,7 +34,7 @@ class UI {
 			if(state.credits != null) {
 				creditIncrease = ((state.credits - lastCredits) * 0.1);
 				lastCredits += creditIncrease;
-				creditScaleIncrease = Std.int(Math.min(Math.abs(creditIncrease) * 10.0, 10.0));
+				creditScaleIncrease = Std.int(Math.min(Math.abs(creditIncrease) * 10.0, 10.0) * (1 + Math.random() * 0.4));
 			}
 			
 			g2.fontSize = 16 + creditScaleIncrease;
