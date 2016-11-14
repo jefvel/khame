@@ -24,43 +24,12 @@
       height: 100%;
       display: block;
     }
-    
-    .avatar-container {
-      pointer-events: none;
-      position: absolute;
-      padding: 0;
-      margin: 0;
-      bottom: 20px;
-      left: 20px;
-    }
-    
-    .avatar-container img {
-      display: none;
-      width: 64px;
-      height:64px;
-      border-radius: 6px;
-      box-shadow: none;
-      outline: none;
-      
-      -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Chrome/Safari/Opera */
-      -khtml-user-select: none; /* Konqueror */
-      -moz-user-select: none; /* Firefox */
-      -ms-user-select: none; /* Internet Explorer/Edge */
-      user-select: none; 
-    }
-    
   </style>
 </head>
 
 <body>
   <script src="https://connect.facebook.net/en_US/sdk.js"></script>
-
   <canvas id="khanvas"></canvas>
-  <div class="avatar-container">
-    <img id="avatar-img" class="animated bounceIn" />
-  </div>
-    
   <script>
     console.warn = function(){};
   </script>

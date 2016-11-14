@@ -4,6 +4,8 @@ class GameState {
 	public var userName:String;
 	public var userId:String;
 	
+	public var playerFaction:game.WorldPowers.Faction;
+	
 	public var loggedInOnFacebook:Bool;
 	public var loggedInOnFirebase:Bool;
 	
@@ -14,6 +16,8 @@ class GameState {
 	
 	public var cameraX:Float;
 	public var cameraY:Float;
+	
+	public var powerCounts:Map<game.WorldPowers.Faction, Int>;
 	
 	public function new() {
 
@@ -53,6 +57,10 @@ class GameState {
 				this.playerX = defaultOrValue(value.playerX, 100);
 				this.playerY = defaultOrValue(value.playerY, 100);
 				this.userName = defaultOrValue(value.userName, null);
+				
+				if(this.playerFaction == null) {
+					this.playerFaction = defaultOrValue(value.playerFaction, WorldPowers.Faction.None);
+				}
 			});
 		}
 	}
@@ -63,7 +71,8 @@ class GameState {
 				userName: this.userName,
 				credits: this.credits,
 				playerX: this.playerX,
-				playerY: this.playerY
+				playerY: this.playerY,
+				playerFaction: this.playerFaction
 			});
 		}
 	}

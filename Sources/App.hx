@@ -17,19 +17,20 @@ class App {
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
 	
-	var userAvatar:js.html.ImageElement;
 	var user:firebase.User;
 	
 	var font:kha.Font;
 	var ui:game.UI;
 	
 	var gameState:game.GameState;
+	var worldPowers:game.WorldPowers;
 	
 	var inited = false;
 	
 	public function new() {
-		userAvatar = cast js.Browser.document.getElementById("avatar-img");
 		gameState = new game.GameState();
+		worldPowers = new game.WorldPowers(gameState);
+		ui = new game.UI(gameState);
 		
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
@@ -44,6 +45,7 @@ class App {
 		pipeline.depthWrite = true;
 		pipeline.depthMode = kha.graphics4.CompareMode.LessEqual;
 		pipeline.compile();
+		
 		mouse = kha.input.Mouse.get();
 		
 		var config = {
@@ -63,8 +65,7 @@ class App {
 			
 			#if sys_debug_html5
 				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
-			#elseif(sys_html5)
-				trace("authenticating with facebook");
+			#else
 				var authProvider = new firebase.auth.FacebookAuthProvider();
 				authProvider.addScope("public_profile,user_posts");
 				app.auth().signInWithRedirect(authProvider);
@@ -81,37 +82,13 @@ class App {
 				facebook.FB.getLoginStatus(function(e) {
 					if(e.status == 'connected') {
 						gameState.loggedInOnFacebook = true;
-						
-						var postId = "";
-						
-						//Own
-						postId = "10154575577633260";
-						
-						// INet test
-						postId = "207342968259_10154575577633260";
-						
-						//Treeplant test
-						postId = "529364633940911_529365643940810";
-						
-						facebook.FB.api("/" + postId, get, {
-							fields: 'reactions.type(LIKE).limit(0).summary(true).as(like),
-									reactions.type(LOVE).limit(0).summary(true).as(love),
-									reactions.type(WOW).limit(0).summary(true).as(wow),
-									reactions.type(HAHA).limit(0).summary(true).as(haha),
-									reactions.type(SAD).limit(0).summary(true).as(sad),
-									reactions.type(ANGRY).limit(0).summary(true).as(angry),
-									reactions.type(THANKFUL).limit(0).summary(true).as(thankful)'
-						}, function(e) {
-							trace(e);
-						});
+						worldPowers.refreshPowers();
 					} else {
 						gameState.loggedInOnFacebook = false;
 					}
 				});
 				
 				gameState.userId = user.uid;
-				
-				var email = user.email;
 				
 				if(user.displayName != null) {
 					gameState.userName = user.displayName;
@@ -120,7 +97,6 @@ class App {
 				}
 				
 				gameState.loadState();
-				
 				updateAvatar();
 				
 				if(!inited){
@@ -128,21 +104,20 @@ class App {
 				}
 				
 				inited = true;
-				
 				gameState.loggedInOnFirebase = true;
 			}
 		});
 		
+		trace(js.Browser.location);
 		
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
-			ui = new game.UI(this.font, gameState);
+			ui.setFont(this.font);
 		});
 		
 		updateAvatar();
 	}
 	
-	var img:kha.Image;
 	function generateName() {
 		return "Elf Boy";
 	}
@@ -163,6 +138,7 @@ class App {
 	
 	var friction:Float = 0.9;
 	var firstdown:Bool = false;
+	
 	var mdown = false;
 	var moveX:Float = 0;
 	var moveY:Float = 0;
