@@ -4,6 +4,9 @@ class GameState {
 	public var userName:String;
 	public var userId:String;
 	
+	public var loggedInOnFacebook:Bool;
+	public var loggedInOnFirebase:Bool;
+	
 	public var credits:Int;
 	
 	public var playerX:Float;

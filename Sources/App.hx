@@ -71,7 +71,6 @@ class App {
 			#end
 			
 			} else {
-				trace(js.Browser.location);
 				facebook.FB.init({
 					appId      : '96688622773',
 					xfbml      : true,
@@ -81,9 +80,20 @@ class App {
 				
 				facebook.FB.getLoginStatus(function(e) {
 					if(e.status == 'connected') {
-						trace("Connected to facebook!");
+						gameState.loggedInOnFacebook = true;
 						
-						facebook.FB.api("/10210769181335377", get, {
+						var postId = "";
+						
+						//Own
+						postId = "10154575577633260";
+						
+						// INet test
+						postId = "207342968259_10154575577633260";
+						
+						//Treeplant test
+						postId = "529364633940911_529365643940810";
+						
+						facebook.FB.api("/" + postId, get, {
 							fields: 'reactions.type(LIKE).limit(0).summary(true).as(like),
 									reactions.type(LOVE).limit(0).summary(true).as(love),
 									reactions.type(WOW).limit(0).summary(true).as(wow),
@@ -94,21 +104,20 @@ class App {
 						}, function(e) {
 							trace(e);
 						});
+					} else {
+						gameState.loggedInOnFacebook = false;
 					}
 				});
 				
 				gameState.userId = user.uid;
 				
 				var email = user.email;
-				var db = app.database();
 				
 				if(user.displayName != null) {
 					gameState.userName = user.displayName;
 				}else{
 					gameState.userName = generateName();
 				}
-				
-				var date = Date.now().toString();
 				
 				gameState.loadState();
 				
@@ -119,6 +128,8 @@ class App {
 				}
 				
 				inited = true;
+				
+				gameState.loggedInOnFirebase = true;
 			}
 		});
 		
@@ -137,24 +148,16 @@ class App {
 	}
 	
 	function updateAvatar() {
-		var email;
-		
 		if(gameState.userName != null) {
-			email = gameState.userName;
-			userAvatar.src = 'https://api.adorable.io/avatars/64/$email.io';
+			var avatarUrl;
+			var userName = gameState.userName;
+			avatarUrl = 'https://api.adorable.io/avatars/64/$userName.io';
 			
 			if(user.photoURL != null) {
-				userAvatar.src = user.photoURL;
+				avatarUrl = user.photoURL;
 			}
 			
-			kha.Assets.loadImageFromPath(userAvatar.src, true,
-			function(image) {
-				this.img = image;
-			});
-		
-		}else{
-			userAvatar.src = "";
-			userAvatar.style.display = "none";
+			ui.loadAvatar(avatarUrl);
 		}
 	}
 	
@@ -210,7 +213,6 @@ class App {
 			moveY *= friction;
 		}
 		
-		//g2.setPipeline(pipeline);
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, gameState.playerX, gameState.playerY, 3);
 		g2.end();
@@ -218,16 +220,5 @@ class App {
 		if(ui != null) {
 			ui.render(framebuffer);
 		}
-		
-		if(img != null) {
-			g2.begin(false);
-			g2.color = kha.Color.White;
-			g2.drawScaledImage(img, 20, framebuffer.height - 20 - 64, 64, 64);
-			g2.end();
-		}
-		
-		
-		//g2.begin(true, kha.Color.fromFloats(0.2, 0.4, 0.6));
-		//g2.end();
 	}
 }

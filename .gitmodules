@@ -4,3 +4,6 @@
 [submodule "Libraries/kek"]
 	path = Libraries/kek
 	url = https://github.com/jefvel/kek.git
+[submodule "Libraries/haxe-firebase"]
+	path = Libraries/haxe-firebase
+	url = https://github.com/jefvel/haxe-firebase.git
