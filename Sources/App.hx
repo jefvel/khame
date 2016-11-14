@@ -58,15 +58,45 @@ class App {
 		
 		firebase.Firebase.auth().onAuthStateChanged(function(user) {
 			this.user = user;
-			if(user == null) {
 			
-			#if html5debug
+			if(this.user == null) {
+			
+			#if sys_debug_html5
 				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
-			#else
-				app.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider());
+			#elseif(sys_html5)
+				trace("authenticating with facebook");
+				var authProvider = new firebase.auth.FacebookAuthProvider();
+				authProvider.addScope("public_profile,user_posts");
+				app.auth().signInWithRedirect(authProvider);
 			#end
 			
 			} else {
+				trace(js.Browser.location);
+				facebook.FB.init({
+					appId      : '96688622773',
+					xfbml      : true,
+					version    : 'v2.8',
+					cookie: true,
+				});
+				
+				facebook.FB.getLoginStatus(function(e) {
+					if(e.status == 'connected') {
+						trace("Connected to facebook!");
+						
+						facebook.FB.api("/10210769181335377", get, {
+							fields: 'reactions.type(LIKE).limit(0).summary(true).as(like),
+									reactions.type(LOVE).limit(0).summary(true).as(love),
+									reactions.type(WOW).limit(0).summary(true).as(wow),
+									reactions.type(HAHA).limit(0).summary(true).as(haha),
+									reactions.type(SAD).limit(0).summary(true).as(sad),
+									reactions.type(ANGRY).limit(0).summary(true).as(angry),
+									reactions.type(THANKFUL).limit(0).summary(true).as(thankful)'
+						}, function(e) {
+							trace(e);
+						});
+					}
+				});
+				
 				gameState.userId = user.uid;
 				
 				var email = user.email;
@@ -87,6 +117,7 @@ class App {
 				if(!inited){
 					mouse.notify(mouseDown, mouseUp, mouseMove, null);
 				}
+				
 				inited = true;
 			}
 		});
@@ -99,6 +130,7 @@ class App {
 		
 		updateAvatar();
 	}
+	
 	var img:kha.Image;
 	function generateName() {
 		return "Elf Boy";
@@ -119,9 +151,7 @@ class App {
 			function(image) {
 				this.img = image;
 			});
-
-			
-			//userAvatar.style.display = "block";
+		
 		}else{
 			userAvatar.src = "";
 			userAvatar.style.display = "none";
@@ -133,8 +163,6 @@ class App {
 	var mdown = false;
 	var moveX:Float = 0;
 	var moveY:Float = 0;
-	var x:Float = 0;
-	var y:Float = 0;
 	
 	function mouseMove(x:Int, y:Int, dx:Int, dy:Int) {
 		//trace('Mouse: $x, $y. Move: $dx, $dy');
@@ -171,8 +199,8 @@ class App {
 		g2.clear(kha.Color.White); 
 		g2.color = kha.Color.White;
 		
-		y += (moveY);
-		x += (moveX);
+		gameState.playerX += (moveX);
+		gameState.playerY += (moveY);
 		
 		if(mdown) {
 			moveY = 0;
@@ -184,7 +212,7 @@ class App {
 		
 		//g2.setPipeline(pipeline);
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
-		g2.drawLine(0, 0, 20 + x, 20 + y, 3);
+		g2.drawLine(0, 0, gameState.playerX, gameState.playerY, 3);
 		g2.end();
 		
 		if(ui != null) {
