@@ -19,6 +19,8 @@ class GameState {
 	
 	public var powerCounts:Map<game.WorldPowers.Faction, Int>;
 	
+	var playerRef:firebase.database.Reference;
+	
 	public function new() {
 
 	}
@@ -44,8 +46,14 @@ class GameState {
 	}
 	
 	public function loadState() {
-		if(userId != null) {
-			firebase.Firebase.database().ref('players/$userId').once(firebase.EventType.value).then(function(e){
+		if(playerRef == null) {
+			if(userId != null) {
+				playerRef = firebase.Firebase.database().ref('players/$userId');
+			}
+		}
+		
+		if(playerRef != null) {
+			playerRef.once(Value).then(function(e){
 				var value = e.val();
 				
 				if(value == null) {
@@ -66,8 +74,14 @@ class GameState {
 	}
 	
 	public function saveState() {
-		if(userId != null) {
-			firebase.Firebase.database().ref('players/$userId').set({
+		if(playerRef == null) {
+			if(userId != null) {
+				playerRef = firebase.Firebase.database().ref('players/$userId');
+			}
+		}
+		
+		if(playerRef != null) {
+			playerRef.update({
 				userName: this.userName,
 				credits: this.credits,
 				playerX: this.playerX,
