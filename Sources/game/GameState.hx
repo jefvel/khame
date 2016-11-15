@@ -45,13 +45,16 @@ class GameState {
 		saveState();
 	}
 	
-	public function loadState() {
+	inline function checkPlayerReference() {
 		if(playerRef == null) {
 			if(userId != null) {
 				playerRef = firebase.Firebase.database().ref('players/$userId');
 			}
 		}
-		
+	}
+	
+	public function loadState() {
+		checkPlayerReference();
 		if(playerRef != null) {
 			playerRef.once(Value).then(function(e){
 				var value = e.val();
@@ -74,11 +77,7 @@ class GameState {
 	}
 	
 	public function saveState() {
-		if(playerRef == null) {
-			if(userId != null) {
-				playerRef = firebase.Firebase.database().ref('players/$userId');
-			}
-		}
+		checkPlayerReference();
 		
 		if(playerRef != null) {
 			playerRef.update({
