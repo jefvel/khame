@@ -1,5 +1,5 @@
 {
- "name": "App",
+ "name": "Trees 4 Santa",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
@@ -37,5 +37,10 @@
    "type": "image\/png",
    "density": "4.0"
   }
- ]
+ ],
+ "description":"Now you can plant trees to be the coolest! Santa will be proud!",
+ "background_color":"#BF7C69",
+ "start_url": "index.html",
+ "display": "standalone",
+ "orientation": "portrait"
 }
