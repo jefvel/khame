@@ -33,6 +33,9 @@ class WorldPowers {
 			//Treeplant test
 			postId = "529364633940911_529365643940810";
 			
+			//Skrattat test postId
+			postId = "1646890415585913_1780001612274792";
+			
 			facebook.FB.api("/" + postId, get, {
 				fields: 'reactions.type(LIKE).limit(0).summary(true).as(like),
 						reactions.type(LOVE).limit(0).summary(true).as(love),
