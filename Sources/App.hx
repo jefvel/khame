@@ -4,16 +4,9 @@ import kha.Framebuffer;
 import kha.Scheduler;
 import kha.System;
 
-import kha.graphics4.VertexStructure;
-import kha.graphics4.VertexBuffer;
-import kha.graphics4.IndexBuffer;
-import kha.graphics4.PipelineState;
-import kha.graphics4.VertexData;
-import kha.graphics4.Usage;
 import kek.physics.SpringSystem;
 
 class App {
-	var pipeline:PipelineState;
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
 	
@@ -24,6 +17,7 @@ class App {
 	
 	var gameState:game.GameState;
 	var worldPowers:game.WorldPowers;
+	var chunks:graphics.ChunkManager;
 	
 	var inited = false;
 	
@@ -32,19 +26,12 @@ class App {
 		worldPowers = new game.WorldPowers(gameState);
 		ui = new game.UI(gameState);
 		
+		chunks = new graphics.ChunkManager();
+		chunks.centerOn(0, 0);
+		
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
 		Scheduler.addFrameTask(update, 0);
-		
-		pipeline = new PipelineState();
-		var layout = new VertexStructure();
-		layout.add("pos", VertexData.Float3);
-		pipeline.inputLayout = [layout];
-		pipeline.vertexShader = kha.Shaders.test_vert;
-		pipeline.fragmentShader = kha.Shaders.test_frag;
-		pipeline.depthWrite = true;
-		pipeline.depthMode = kha.graphics4.CompareMode.LessEqual;
-		pipeline.compile();
 		
 		mouse = kha.input.Mouse.get();
 		
@@ -154,16 +141,16 @@ class App {
 	}
 	
 	function mouseUp(x:Int, y:Int, i:Int) {
-		kha.SystemImpl.unlockMouse();
-		mouse.showSystemCursor();
+		//kha.SystemImpl.unlockMouse();
+		//mouse.showSystemCursor();
 		mdown = false;
 		firstdown = false;
 	}
 	
 	function mouseDown(x:Int, y:Int, i:Int) {
-		kha.SystemImpl.lockMouse();
+		//kha.SystemImpl.lockMouse();
 		gameState.addCredits();
-		mouse.hideSystemCursor();
+		//mouse.hideSystemCursor();
 		mdown = true;
 		firstdown = true;
 	}
@@ -192,6 +179,10 @@ class App {
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, gameState.playerX, gameState.playerY, 3);
 		g2.end();
+		
+		if(gameState.loggedInOnFirebase) {
+			chunks.render(framebuffer);
+		}
 		
 		if(ui != null) {
 			ui.render(framebuffer);
