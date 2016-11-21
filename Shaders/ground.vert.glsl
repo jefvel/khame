@@ -13,7 +13,6 @@ varying vec3 BC;
 
 void main() {
     BC = barycentric;
-    // Just output position
     vec4 wp = camera * vec4(pos, 1.0);
     worldPos = pos;
     

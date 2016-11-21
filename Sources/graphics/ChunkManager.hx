@@ -69,7 +69,7 @@ class ChunkManager {
 		var time = haxe.Timer.stamp() - firstTime;
 		camera = kha.math.FastMatrix4.lookAt(
 			new kha.math.FastVector3(16, 12, -10),
-			new kha.math.FastVector3(16 + Math.sin(time), 16 + Math.cos(time), 0), 
+			new kha.math.FastVector3(16 + Math.sin(time) * 0.0, 16 + Math.cos(time) * 0.0, 0), 
 			new kha.math.FastVector3(0, 1, 0));
 			
 		perspective = kha.math.FastMatrix4.perspectiveProjection(90, framebuffer.width / framebuffer.height, 0.01, 100.0);
