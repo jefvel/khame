@@ -22,6 +22,10 @@ void main() {
     
     float dist = sqrt(dx * dx + dy * dy + dz * dz);
     
-    gl_FragColor = vec4(mix(color, color2, 0.5 + sin(dist * 20.0 + time) * 0.5), 1.0);
-    gl_FragColor = vec4(mix(gl_FragColor.rgb, color2, edgeFactor()), 1.0);
+    float t = sin(dist * 20.0 + time) * 0.5;
+    t = smoothstep(-0.15, 0.15, t);
+    t -= 0.5;
+    
+    vec3 c = mix(color, color2, 0.5 + t);
+    gl_FragColor = vec4(mix(c * vec3(1.4), vec3(1.0, 1.0, 1.0), 1.0 - edgeFactor()), 1.0);
 }
