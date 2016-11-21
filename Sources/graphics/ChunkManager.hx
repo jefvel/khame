@@ -14,6 +14,7 @@ class ChunkManager {
 	var cameraLocation:kha.graphics4.ConstantLocation;
 	var perspective:kha.math.FastMatrix4;
 	var perspectiveLocation:kha.graphics4.ConstantLocation;
+	var timeLocation:kha.graphics4.ConstantLocation;
 	
 	var chunk:Chunk;
 	
@@ -37,9 +38,12 @@ class ChunkManager {
 		cameraLocation = pipeline.getConstantLocation("camera");
 		perspectiveLocation = pipeline.getConstantLocation("perspective");
 		
+		timeLocation = pipeline.getConstantLocation("time");
+		
 		chunk = new Chunk();
 		chunk.generateMesh();
 		
+		firstTime = haxe.Timer.stamp();
 	}
 	
 	var _vx:Int;
@@ -59,11 +63,13 @@ class ChunkManager {
 
 		return '$_vx.$_vy';
 	}
-	
+
+	var firstTime = 0.0;
 	public function render(framebuffer:kha.Framebuffer) {
+		var time = haxe.Timer.stamp() - firstTime;
 		camera = kha.math.FastMatrix4.lookAt(
 			new kha.math.FastVector3(16, 12, -10),
-			new kha.math.FastVector3(16, 16, 0), 
+			new kha.math.FastVector3(16 + Math.sin(time), 16 + Math.cos(time), 0), 
 			new kha.math.FastVector3(0, 1, 0));
 			
 		perspective = kha.math.FastMatrix4.perspectiveProjection(90, framebuffer.width / framebuffer.height, 0.01, 100.0);
@@ -74,6 +80,7 @@ class ChunkManager {
 		g4.setPipeline(pipeline);
 		g4.setMatrix(cameraLocation, camera);
 		g4.setMatrix(perspectiveLocation, perspective);
+		g4.setFloat(timeLocation, time);
 		
 		chunk.draw(framebuffer);
 		

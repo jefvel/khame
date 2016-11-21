@@ -162,7 +162,10 @@ class App {
 	function render(framebuffer: Framebuffer): Void {		
 		var g2 = framebuffer.g2;
 		g2.begin();
-		g2.clear(kha.Color.White); 
+		
+		//g2.clear(kha.Color.White); 
+		framebuffer.g4.clear(kha.Color.White, 1.0);
+		
 		g2.color = kha.Color.White;
 		
 		gameState.playerX += (moveX);
