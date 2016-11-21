@@ -25,7 +25,7 @@ class Chunk {
 		
 		var bStructure = new kha.graphics4.VertexStructure();
 		bStructure.add("barycentric", VertexData.Float3);
-		baryBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT, bStructure, Usage.DynamicUsage);
+		baryBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT, bStructure, Usage.StaticUsage);
 		
 		indexBuffer = new IndexBuffer(((CHUNK_WIDTH - 1) * (CHUNK_HEIGHT - 1)) * 2 * 3, Usage.StaticUsage);
 		

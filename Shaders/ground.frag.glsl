@@ -12,6 +12,12 @@ float edgeFactor(){
     return min(min(a3.x, a3.y), a3.z);
 }
 
+vec3 stuff(){
+    vec3 color = vec3(0.31, 0.55, 0.74);
+    vec3 color2 = vec3(1.0);
+    return mix(color, color2, edgeFactor() + (sin(20.0 * (worldPos.x + worldPos.y * 1.2) + time) + 1.0) * 0.5);
+}
+
 void main() {
     // Just output red color
     //gl_FragColor = vec4(0.0, 0.0, 0.0, (1.0-edgeFactor())*0.7);
@@ -19,4 +25,5 @@ void main() {
     vec3 color2 = worldPos;
     color2 = vec3(1.0);
     gl_FragColor = vec4(mix(color,color2, edgeFactor()), 1.0);
+    gl_FragColor.rgb = stuff();
 }
