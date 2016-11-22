@@ -72,7 +72,6 @@ class Chunk {
 				verts.push(x);
 				verts.push(y);
 				var h = height(x + worldX, y + worldY);
-				trace('height: $h');
 				verts.push(h);
 				
 				
