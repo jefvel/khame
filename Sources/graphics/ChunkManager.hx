@@ -20,7 +20,7 @@ class ChunkManager {
 	var timeLocation:ConstantLocation;
 	var offsetLocation:ConstantLocation;
 	
-	var chunk:Chunk;
+	var chunkList:Array<Chunk>;
 	
 	var state:game.GameState;
 	
@@ -48,8 +48,16 @@ class ChunkManager {
 		timeLocation = pipeline.getConstantLocation("time");
 		offsetLocation = pipeline.getConstantLocation("offset");
 		
-		chunk = new Chunk();
-		chunk.generateMesh();
+		chunkList = new Array<Chunk>();
+		for(_x in 0...4) {
+			for(_y in 0...4) {
+				var x = _x - 2;
+				var y = _y - 2;
+				var chunk = new Chunk(x * Chunk.CHUNK_WIDTH, y * Chunk.CHUNK_HEIGHT);
+				chunk.generateMesh();
+				chunkList.push(chunk);
+			}
+		}
 		
 		firstTime = haxe.Timer.stamp();
 	}
@@ -90,9 +98,13 @@ class ChunkManager {
 		g4.setMatrix(perspectiveLocation, perspective);
 		g4.setFloat(timeLocation, time);
 		
-		var offset = new kha.math.FastVector2(chunk.worldX - state.cameraX, chunk.worldY - state.cameraY);
-		g4.setVector2(offsetLocation, offset);
-		chunk.draw(framebuffer);
+		var offset = new kha.math.FastVector2();
+		for(chunk in chunkList){
+			offset.x = chunk.worldX - state.cameraX;
+			offset.y = chunk.worldY - state.cameraY;
+			g4.setVector2(offsetLocation, offset);
+			chunk.draw(framebuffer);
+		}
 		
 		g4.end();
 	}

@@ -9,6 +9,9 @@ class Chunk {
 	public static inline var CHUNK_WIDTH = 32;
 	public static inline var CHUNK_HEIGHT = 32;
 	
+	static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
+	static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
+	
 	public var worldX:Int;
 	public var worldY:Int;
 	
@@ -25,13 +28,13 @@ class Chunk {
 		
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
-		vertexBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT, vStructure, Usage.DynamicUsage);
+		vertexBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, vStructure, Usage.DynamicUsage);
 		
 		var bStructure = new kha.graphics4.VertexStructure();
 		bStructure.add("barycentric", VertexData.Float3);
-		baryBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT, bStructure, Usage.StaticUsage);
+		baryBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, bStructure, Usage.StaticUsage);
 		
-		indexBuffer = new IndexBuffer(((CHUNK_WIDTH - 1) * (CHUNK_HEIGHT - 1)) * 2 * 3, Usage.StaticUsage);
+		indexBuffer = new IndexBuffer(((CHUNK_VERTS_X - 1) * (CHUNK_VERTS_Y - 1)) * 2 * 3, Usage.StaticUsage);
 		
 		buffers = [vertexBuffer, baryBuffer];
 		
@@ -41,7 +44,7 @@ class Chunk {
 	}
 	
 	private inline function coordsToIndex(x:Int, y:Int) {
-		return x + y * (CHUNK_WIDTH);
+		return x + y * (CHUNK_VERTS_X);
 	}
 	
 	var scale = 6.12;
@@ -67,8 +70,8 @@ class Chunk {
 
 		
 		var bx = 0;
-		for(y in 0...CHUNK_WIDTH) {
-			for(x in 0...CHUNK_HEIGHT) {
+		for(y in 0...CHUNK_VERTS_Y) {
+			for(x in 0...CHUNK_VERTS_X) {
 				verts.push(x);
 				verts.push(y);
 				var h = height(x + worldX, y + worldY);
@@ -79,8 +82,8 @@ class Chunk {
 				baryCoords.push(barys[(bx + x) % 3][1]);
 				baryCoords.push(barys[(bx + x) % 3][2]);
 				
-				if(x < CHUNK_WIDTH - 1) {
-					if(y < CHUNK_HEIGHT - 1) {
+				if(x < CHUNK_VERTS_X - 1) {
+					if(y < CHUNK_VERTS_Y - 1) {
 						indices.push(coordsToIndex(x, y));
 						indices.push(coordsToIndex(x, y + 1));
 						indices.push(coordsToIndex(x + 1, y));
