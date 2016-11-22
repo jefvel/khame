@@ -2,6 +2,7 @@ package graphics;
 import kha.graphics4.PipelineState;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.VertexData;
+import kha.graphics4.ConstantLocation;
 
 class ChunkManager {
 	var chunks:Map<String, Chunk>;
@@ -11,14 +12,20 @@ class ChunkManager {
 	var structure:VertexStructure;
 	
 	var camera:kha.math.FastMatrix4;
-	var cameraLocation:kha.graphics4.ConstantLocation;
+	var cameraLocation:ConstantLocation;
+	
 	var perspective:kha.math.FastMatrix4;
-	var perspectiveLocation:kha.graphics4.ConstantLocation;
-	var timeLocation:kha.graphics4.ConstantLocation;
+	var perspectiveLocation:ConstantLocation;
+	
+	var timeLocation:ConstantLocation;
+	var offsetLocation:ConstantLocation;
 	
 	var chunk:Chunk;
 	
-	public function new() {
+	var state:game.GameState;
+	
+	public function new(g:game.GameState) {
+		state = g;
 		chunks = new Map<String, Chunk>();
 		pipeline = new PipelineState();
 		var layout = new VertexStructure();
@@ -39,6 +46,7 @@ class ChunkManager {
 		perspectiveLocation = pipeline.getConstantLocation("perspective");
 		
 		timeLocation = pipeline.getConstantLocation("time");
+		offsetLocation = pipeline.getConstantLocation("offset");
 		
 		chunk = new Chunk();
 		chunk.generateMesh();
@@ -68,8 +76,8 @@ class ChunkManager {
 	public function render(framebuffer:kha.Framebuffer) {
 		var time = haxe.Timer.stamp() - firstTime;
 		camera = kha.math.FastMatrix4.lookAt(
-			new kha.math.FastVector3(16, 12, -10),
-			new kha.math.FastVector3(16 + Math.sin(time), 16 + Math.cos(time), 0), 
+			new kha.math.FastVector3(16 + Math.sin(time * 0.1), 14, -10),
+			new kha.math.FastVector3(16 + Math.sin(time) * 0.0, 16 + Math.cos(time) * 0.0, 0), 
 			new kha.math.FastVector3(0, 1, 0));
 			
 		perspective = kha.math.FastMatrix4.perspectiveProjection(90, framebuffer.width / framebuffer.height, 0.01, 100.0);
@@ -82,6 +90,8 @@ class ChunkManager {
 		g4.setMatrix(perspectiveLocation, perspective);
 		g4.setFloat(timeLocation, time);
 		
+		var offset = new kha.math.FastVector2(chunk.worldX - state.cameraX, chunk.worldY - state.cameraY);
+		g4.setVector2(offsetLocation, offset);
 		chunk.draw(framebuffer);
 		
 		g4.end();

@@ -10,15 +10,19 @@ class Chunk {
 	public static inline var CHUNK_HEIGHT = 32;
 	
 	public var worldX:Int;
-	public var woldY:Int;
+	public var worldY:Int;
 	
 	var vertexBuffer:VertexBuffer;
 	var baryBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
 	
 	var buffers:Array<VertexBuffer>;
+	static var noise:kek.math.PerlinNoise;
 	
-	public function new()  {
+	public function new(wx:Int = 0, wy:Int = 0)  {
+		worldX = wx;
+		worldY = wy;
+		
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
 		vertexBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT, vStructure, Usage.DynamicUsage);
@@ -30,10 +34,24 @@ class Chunk {
 		indexBuffer = new IndexBuffer(((CHUNK_WIDTH - 1) * (CHUNK_HEIGHT - 1)) * 2 * 3, Usage.StaticUsage);
 		
 		buffers = [vertexBuffer, baryBuffer];
+		
+		if(noise == null) {
+			noise = new kek.math.PerlinNoise();
+		}
 	}
 	
 	private inline function coordsToIndex(x:Int, y:Int) {
 		return x + y * (CHUNK_WIDTH);
+	}
+	
+	var scale = 6.12;
+	private function height(worldX:Float, worldY:Float) {
+		worldX *= scale;
+		worldY *= scale;
+		
+		var h = noise.noise2D(worldX, worldY) * 10.0;
+		
+		return h;
 	}
 	
 	public function generateMesh() {
@@ -53,7 +71,10 @@ class Chunk {
 			for(x in 0...CHUNK_HEIGHT) {
 				verts.push(x);
 				verts.push(y);
-				verts.push(Math.random());
+				var h = height(x + worldX, y + worldY);
+				trace('height: $h');
+				verts.push(h);
+				
 				
 				baryCoords.push(barys[(bx + x) % 3][0]);
 				baryCoords.push(barys[(bx + x) % 3][1]);

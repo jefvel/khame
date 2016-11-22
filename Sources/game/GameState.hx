@@ -22,7 +22,7 @@ class GameState {
 	var playerRef:firebase.database.Reference;
 	
 	public function new() {
-
+		
 	}
 	
 	public function addCredits() {
@@ -72,6 +72,9 @@ class GameState {
 				if(this.playerFaction == null) {
 					this.playerFaction = defaultOrValue(value.playerFaction, WorldPowers.Faction.None);
 				}
+				
+				this.loggedInOnFirebase = true;
+				
 			});
 		}
 	}

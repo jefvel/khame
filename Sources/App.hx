@@ -26,7 +26,7 @@ class App {
 		worldPowers = new game.WorldPowers(gameState);
 		ui = new game.UI(gameState);
 		
-		chunks = new graphics.ChunkManager();
+		chunks = new graphics.ChunkManager(gameState);
 		chunks.centerOn(0, 0);
 		
 		springs = new SpringSystem();
@@ -91,7 +91,6 @@ class App {
 				}
 				
 				inited = true;
-				gameState.loggedInOnFirebase = true;
 			}
 		});
 		
@@ -182,6 +181,9 @@ class App {
 		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
 		g2.drawLine(0, 0, gameState.playerX, gameState.playerY, 3);
 		g2.end();
+		
+		gameState.cameraX = gameState.playerX * 0.1;
+		gameState.cameraY = gameState.playerY * 0.1;
 		
 		if(gameState.loggedInOnFirebase) {
 			chunks.render(framebuffer);
