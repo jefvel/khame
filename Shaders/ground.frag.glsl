@@ -20,7 +20,8 @@ vec3 stuff(){
 
 void main() {
     vec3 color = vec3(0.31, 0.55, 0.74);
-    vec3 color2 = vec3(1.0);
+    //color = vec3(240.0 / 255.0, 0.0, 120.0 / 255.0);
+    vec3 color2 = vec3(0.0);
     
     float dx = 1.0 / 3.0 - BC.x;
     float dy = 1.0 / 3.0 - BC.y;
@@ -34,5 +35,5 @@ void main() {
     
     vec3 c = mix(color, color2, 0.5 + t);
     c = vec3(0.0);
-    gl_FragColor = vec4(mix(c * vec3(1.4), vec3(1.0, 1.0, 1.0), edgeFactor()), 1.0);
+    gl_FragColor = vec4(mix(c * vec3(1.4), vec3(1.0), edgeFactor()), 1.0);
 }

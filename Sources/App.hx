@@ -16,18 +16,28 @@ class App {
 	var ui:game.UI;
 	
 	var gameState:game.GameState;
+	var renderState:graphics.RenderState;
 	var worldPowers:game.WorldPowers;
+	
 	var chunks:graphics.ChunkManager;
+	var objects:graphics.WorldObjects;
 	
 	var inited = false;
 	
+	var entity:graphics.WorldObject;
+	
 	public function new() {
 		gameState = new game.GameState();
+		renderState = new graphics.RenderState(gameState);
 		worldPowers = new game.WorldPowers(gameState);
 		ui = new game.UI(gameState);
 		
-		chunks = new graphics.ChunkManager(gameState);
+		chunks = new graphics.ChunkManager(gameState, renderState);
 		chunks.centerOn(0, 0);
+		
+		objects = new graphics.WorldObjects(gameState, renderState);
+		entity = new graphics.WorldObject();
+		objects.addObject(entity);
 		
 		springs = new SpringSystem();
 		System.notifyOnRender(render);
@@ -94,8 +104,6 @@ class App {
 			}
 		});
 		
-		trace(js.Browser.location);
-		
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
@@ -159,15 +167,18 @@ class App {
 	}
 
 	function render(framebuffer: Framebuffer): Void {		
+		renderState.update(framebuffer);
+		
 		var g2 = framebuffer.g2;
 		g2.begin();
 		
 		//g2.clear(kha.Color.White); 
-		framebuffer.g4.clear(kha.Color.White, 1.0);
+		framebuffer.g4.clear(kha.Color.Black, 1.0);
 		
 		g2.color = kha.Color.White;
 		
-		gameState.playerX += (moveX);
+		entity.scale.x = 0.4;
+		gameState.playerX -= (moveX);
 		gameState.playerY += (moveY);
 		
 		if(mdown) {
@@ -187,6 +198,12 @@ class App {
 		
 		if(gameState.loggedInOnFirebase) {
 			chunks.render(framebuffer);
+			
+			entity.position.x = renderState.cameraTargetPos.x;
+			entity.position.y = renderState.cameraTargetPos.y;
+			entity.position.z = renderState.cameraTargetPos.z;
+			
+			objects.render(framebuffer);
 		}
 		
 		if(ui != null) {
