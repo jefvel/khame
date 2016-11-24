@@ -22,6 +22,7 @@ class ChunkManager {
 	
 	var timeLocation:ConstantLocation;
 	var offsetLocation:ConstantLocation;
+	var cursorLocation:ConstantLocation;
 	
 	var chunkList:Array<Chunk>;
 	
@@ -52,6 +53,7 @@ class ChunkManager {
 		
 		timeLocation = pipeline.getConstantLocation("time");
 		offsetLocation = pipeline.getConstantLocation("offset");
+		cursorLocation = pipeline.getConstantLocation("cursorPos");
 		
 		chunkList = new Array<Chunk>();
 		for(_x in 0...4) {
@@ -101,26 +103,35 @@ class ChunkManager {
 		g4.setMatrix(perspectiveLocation, renderState.perspectiveMatrix);
 		g4.setFloat(timeLocation, time);
 		
+		
 		var offset = new kha.math.FastVector2();
 		var hit:kha.math.Vector3 = null;
 		for(chunk in chunkList) {
-			offset.x = chunk.worldX;
-			offset.y = chunk.worldY;
-			g4.setVector2(offsetLocation, offset);
-			chunk.draw(framebuffer);
-			
-			if(hit == null) {
-				hit = chunk.intersects(renderState.cameraPosition, renderState.cameraDirection);
+			hit = chunk.intersects(renderState.cameraPosition, renderState.cameraDirection);
+			if(hit != null) {
+				break;
 			}
 		}
-		
-		g4.end();
 		
 		if(hit != null){
 			renderState.cameraTargetPos.x = hit.x;
 			renderState.cameraTargetPos.y = hit.y;
 			renderState.cameraTargetPos.z = hit.z;
 		}
+		
+		g4.setVector3(cursorLocation, FastVector3.fromVector3(renderState.cameraTargetPos));
+		
+		for(chunk in chunkList) {
+
+			offset.x = chunk.worldX;
+			offset.y = chunk.worldY;
+			
+			g4.setVector2(offsetLocation, offset);
+			chunk.draw(framebuffer);
+		}
+		
+		g4.end();
+		
 	}
 	
 	public function centerOn(worldX:Int = 0, worldY:Int = 0) {

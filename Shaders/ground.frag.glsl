@@ -4,7 +4,9 @@ precision mediump float;
 varying vec3 BC;
 
 uniform float time;
+
 varying vec3 worldPos;
+uniform vec3 cursorPos;
 
 float edgeFactor(){
     vec3 d = fwidth(BC);
@@ -34,6 +36,7 @@ void main() {
     t -= 0.5;
     
     vec3 c = mix(color, color2, 0.5 + t);
-    c = vec3(0.0);
-    gl_FragColor = vec4(mix(c * vec3(1.4), vec3(1.0), edgeFactor()), 1.0);
+    c = vec3(0.5);
+    gl_FragColor = vec4(mix(c * vec3(1.4), vec3(241.0 / 256.0, 238.0 / 256.0, 238.0 / 256.0), edgeFactor()), 1.0);
+    gl_FragColor.rgb -= vec3(smoothstep(0.8, 0.0, min(distance(cursorPos, worldPos), 1.0))) * 0.5;
 }

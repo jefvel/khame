@@ -5,7 +5,7 @@ import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 
-import kek.math.TriangleRayIntersection;
+import kek.math.RayIntersections;
 import kha.math.Vector3;
 
 class Chunk {
@@ -26,10 +26,13 @@ class Chunk {
 	var heights:Array<Float>;
 	static var noise:kek.math.PerlinNoise;
 	
+	var maxHeightInChunk:Float;
+	
 	public function new(wx:Int = 0, wy:Int = 0)  {
+		maxHeightInChunk = 0.0;
+		
 		worldX = wx;
 		worldY = wy;
-		
 		
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
@@ -77,6 +80,16 @@ class Chunk {
 	
 	public function intersects(ray:kha.math.Vector3, dir:kha.math.Vector3) {
 		var hit = false;
+		
+		hit = RayIntersections.rayBoxIntersection(
+			worldX, worldX + CHUNK_WIDTH,
+			worldY, worldY + CHUNK_HEIGHT,
+			0.0, maxHeightInChunk, ray, dir);
+			
+		if(!hit) {
+			return null;
+		}
+
 		var result:Vector3 = new Vector3();
 		for(y in 0...CHUNK_HEIGHT) {
 			for(x in 0...CHUNK_WIDTH) {
@@ -92,7 +105,7 @@ class Chunk {
 				v3.y = y + worldY;
 				v3.z = getLocalHeight(x + 1, y);
 				
-				hit = TriangleRayIntersection.intersection(v1, v2, v3, ray, dir, result);
+				hit = RayIntersections.rayTriangleIntersection(v1, v2, v3, ray, dir, result);
 				
 				if(hit) {
 					break;
@@ -102,7 +115,7 @@ class Chunk {
 				v1.y = y + worldY + 1;
 				v1.z = getLocalHeight(x + 1, y + 1);
 				
-				hit = TriangleRayIntersection.intersection(v1, v2, v3, ray, dir, result);
+				hit = RayIntersections.rayTriangleIntersection(v1, v2, v3, ray, dir, result);
 				
 				if(hit) {
 					break;
@@ -139,9 +152,10 @@ class Chunk {
 				verts.push(x);
 				verts.push(y);
 				var h = height(x + worldX, y + worldY);
+				maxHeightInChunk = Math.max(maxHeightInChunk, h);
+				
 				heights.push(h);
 				verts.push(h);
-				
 				
 				baryCoords.push(barys[(bx + x) % 3][0]);
 				baryCoords.push(barys[(bx + x) % 3][1]);

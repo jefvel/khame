@@ -19,8 +19,9 @@ void main() {
     wp.x += offset.x;
     wp.y += offset.y;
     
+    worldPos = wp.xyz;
+    
     wp = camera * wp;
-    worldPos = pos;
     
     gl_Position = perspective * wp;
 }
