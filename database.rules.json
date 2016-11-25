@@ -1,6 +1,16 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    ".read": false,
+    ".write": false,
+    "chunks": {
+      ".read":"auth != null",
+      ".write": "auth != null && auth.uid === 'kM9bkGCP6MhBqBMttfuD8R2Snmn2'"
+    }
+  },
+  "players": {
+    "$player": {
+      ".read": "auth != null && auth.uid === $player",
+      ".write": "auth != null && (auth.uid === $player || auth.uid === 'kM9bkGCP6MhBqBMttfuD8R2Snmn2')"
+    }
   }
 }

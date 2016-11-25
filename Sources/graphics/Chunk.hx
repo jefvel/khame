@@ -9,12 +9,15 @@ import kek.math.RayIntersections;
 import kha.math.Vector3;
 
 class Chunk {
+	public static inline var MAX_HEIGHT = 20.0;
 	public static inline var CHUNK_WIDTH = 32;
 	public static inline var CHUNK_HEIGHT = 32;
 	
 	static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
 	static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
 	
+	public var x:Int;
+	public var y:Int;
 	public var worldX:Int;
 	public var worldY:Int;
 	
@@ -24,16 +27,13 @@ class Chunk {
 	
 	var buffers:Array<VertexBuffer>;
 	var heights:Array<Float>;
+	
 	static var noise:kek.math.PerlinNoise;
+	static var largeNoise:kek.math.PerlinNoise;
 	
 	public var maxHeightInChunk:Float;
 	
 	public function new(wx:Int = 0, wy:Int = 0)  {
-		maxHeightInChunk = 0.0;
-		
-		worldX = wx;
-		worldY = wy;
-		
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
 		vertexBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, vStructure, Usage.DynamicUsage);
@@ -47,21 +47,51 @@ class Chunk {
 		buffers = [vertexBuffer, baryBuffer];
 		
 		if(noise == null) {
-			noise = new kek.math.PerlinNoise();
+			noise = new kek.math.PerlinNoise(453, 7, 0.7);
+			largeNoise = new kek.math.PerlinNoise(499, 2);
 		}
+		
+		updatePos(wx, wy);
+	}
+	
+	public inline function chunkId():String {
+		return '$x.$y';
+	}
+	
+	public function updatePos(wx:Int, wy:Int) {
+		maxHeightInChunk = 0.0;
+		
+		worldX = wx;
+		worldY = wy;
+		
+		if(wx < 0) {
+			x = Std.int((wx + 1) / CHUNK_WIDTH) - 1;
+		}else {
+			x = Std.int(wx / CHUNK_WIDTH);
+		}
+		
+		if(wy < 0) {
+			y = Std.int((wy + 1) / CHUNK_HEIGHT) - 1;
+		}else {
+			y = Std.int(wy / CHUNK_HEIGHT);
+		}
+		
+		trace('updated chunk');
+		
+		generateMesh();
 	}
 	
 	private inline function coordsToIndex(x:Int, y:Int) {
 		return x + y * (CHUNK_VERTS_X);
 	}
 	
-	var scale = 6.12;
+	var scale = 1.12;
 	private function height(worldX:Float, worldY:Float) {
-		
 		worldX *= scale;
 		worldY *= scale;
+		var largeScale = largeNoise.noise2D(worldX * 0.5, worldY * 0.5);
 		
-		var h = noise.noise2D(worldX, worldY) * 10.0;
+		var h = largeScale * noise.noise2D(worldX, worldY) * MAX_HEIGHT;
 		
 		return h;
 	}

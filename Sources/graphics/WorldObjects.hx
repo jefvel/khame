@@ -100,8 +100,6 @@ class WorldObjects {
 	public function render(framebuffer:kha.Framebuffer) {
 		var time = haxe.Timer.stamp() - firstTime;
 		
-
-		
 		var g4 = framebuffer.g4;
 		g4.begin();
 		//g4.clear(kha.Color.Green, 1.0);

@@ -14,7 +14,7 @@ class RenderState {
 	public var cameraTargetPos:Vector3;
 	
 	public var near:Float = 0.1;
-	public var far:Float = 20.0;
+	public var far:Float = 25.0;
 	public var fov:Float = 90.0;
 	public var ratio:Float = 1.0;
 	
@@ -28,7 +28,7 @@ class RenderState {
 	}
 	
 	public function update(framebuffer:kha.Framebuffer) {
-		var eye = new Vector3(Math.cos(haxe.Timer.stamp()), Math.sin(haxe.Timer.stamp()), 10);
+		var eye = new Vector3(Math.cos(haxe.Timer.stamp()), Math.sin(haxe.Timer.stamp()), 15);
 		eye.x = 0;
 		eye.y = 0;
 		var dir = new Vector3(0, 3, 0);
