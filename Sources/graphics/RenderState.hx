@@ -13,8 +13,16 @@ class RenderState {
 	
 	public var cameraTargetPos:Vector3;
 	
+	public var near:Float = 0.1;
+	public var far:Float = 100.0;
+	public var fov:Float = 90.0;
+	public var ratio:Float = 1.0;
+	
+	public var frustum:kek.graphics.Frustum;
+	
 	var state:game.GameState;
 	public function new(g:game.GameState) {
+		frustum = new kek.graphics.Frustum();
 		state = g;
 		cameraTargetPos = new Vector3();
 	}
@@ -36,12 +44,16 @@ class RenderState {
 			FastVector3.fromVector3(dir), 
 			FastVector3.fromVector3(up));
 		
+		frustum.setCamInternals(fov, ratio, near, far);
+		frustum.setCamDef(eye, dir, up);
+		
 		dir = dir.sub(eye);
 		dir.normalize();
 		
 		cameraDirection = dir;
 		cameraPosition = eye;
 		
-		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(90, framebuffer.width / framebuffer.height, 0.01, 100.0);
+		ratio = framebuffer.width / framebuffer.height;
+		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(fov, ratio, near, far);
 	}
 }

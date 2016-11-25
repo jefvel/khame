@@ -121,13 +121,23 @@ class ChunkManager {
 		
 		g4.setVector3(cursorLocation, FastVector3.fromVector3(renderState.cameraTargetPos));
 		
+		var halfWidth =Chunk.CHUNK_WIDTH * 0.5;
+		var halfHeight = Chunk.CHUNK_HEIGHT * 0.5;
+		
 		for(chunk in chunkList) {
 
 			offset.x = chunk.worldX;
 			offset.y = chunk.worldY;
 			
+			var r = halfWidth * halfWidth + halfHeight * halfHeight;
+			r += chunk.maxHeightInChunk * chunk.maxHeightInChunk;
+			r = Math.sqrt(r);
+			
 			g4.setVector2(offsetLocation, offset);
-			chunk.draw(framebuffer);
+			
+			if(renderState.frustum.sphereInFrustum(chunk.worldX + halfWidth, chunk.worldY + halfHeight, 0, r) != OUTSIDE) {
+				chunk.draw(framebuffer);
+			}
 		}
 		
 		g4.end();

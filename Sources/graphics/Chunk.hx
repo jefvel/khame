@@ -26,7 +26,7 @@ class Chunk {
 	var heights:Array<Float>;
 	static var noise:kek.math.PerlinNoise;
 	
-	var maxHeightInChunk:Float;
+	public var maxHeightInChunk:Float;
 	
 	public function new(wx:Int = 0, wy:Int = 0)  {
 		maxHeightInChunk = 0.0;
