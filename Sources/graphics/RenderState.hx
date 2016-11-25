@@ -14,7 +14,7 @@ class RenderState {
 	public var cameraTargetPos:Vector3;
 	
 	public var near:Float = 0.1;
-	public var far:Float = 100.0;
+	public var far:Float = 20.0;
 	public var fov:Float = 90.0;
 	public var ratio:Float = 1.0;
 	
@@ -46,6 +46,9 @@ class RenderState {
 		
 		frustum.setCamInternals(fov, ratio, near, far);
 		frustum.setCamDef(eye, dir, up);
+		
+		trace('Min: ' + frustum.minPoint);
+		trace('Max: ' + frustum.maxPoint);
 		
 		dir = dir.sub(eye);
 		dir.normalize();
