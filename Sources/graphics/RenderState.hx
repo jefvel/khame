@@ -47,9 +47,6 @@ class RenderState {
 		frustum.setCamInternals(fov, ratio, near, far);
 		frustum.setCamDef(eye, dir, up);
 		
-		trace('Min: ' + frustum.minPoint);
-		trace('Max: ' + frustum.maxPoint);
-		
 		dir = dir.sub(eye);
 		dir.normalize();
 		
