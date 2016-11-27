@@ -1,6 +1,7 @@
 precision mediump float;
 
 attribute vec3 pos;
+attribute vec3 normal;
 attribute vec3 barycentric;
 
 uniform vec2 offset;

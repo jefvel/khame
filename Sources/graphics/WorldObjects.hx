@@ -99,10 +99,10 @@ class WorldObjects {
 	
 	public function render(framebuffer:kha.Framebuffer) {
 		var time = haxe.Timer.stamp() - firstTime;
-		
 		var g4 = framebuffer.g4;
+		
 		g4.begin();
-		//g4.clear(kha.Color.Green, 1.0);
+		
 		g4.setPipeline(pipeline);
 		g4.setMatrix(cameraLocation, renderState.cameraMatrix);
 		g4.setMatrix(perspectiveLocation, renderState.perspectiveMatrix);
@@ -116,7 +116,7 @@ class WorldObjects {
 		for(object in entityList) {
 			offset.x = object.position.x;
 			offset.y = object.position.y;
-			offset.z = object.position.z + 1.0;
+			offset.z = object.position.z;
 			
 			g4.setVector3(offsetLocation, offset);
 			g4.setVector2(scaleLocation, object.scale);
@@ -130,5 +130,4 @@ class WorldObjects {
 	public function addObject(o:WorldObject) {
 		entityList.push(o);
 	}
-	
 }

@@ -33,7 +33,6 @@ class App {
 		ui = new game.UI(gameState);
 		
 		chunks = new graphics.ChunkManager(gameState, renderState);
-		chunks.centerOn(0, 0);
 		
 		objects = new graphics.WorldObjects(gameState, renderState);
 		entity = new graphics.WorldObject();
@@ -109,8 +108,16 @@ class App {
 			ui.setFont(this.font);
 		});
 		
+		kha.input.Keyboard.get().notify(function(k, d) {
+			keydown = true;
+		}, function(k, up) {
+			keydown = false;
+		});
+		
 		updateAvatar();
 	}
+	
+	var keydown = false;
 	
 	function generateName() {
 		return "Elf Boy";
@@ -169,15 +176,12 @@ class App {
 	function render(framebuffer: Framebuffer): Void {		
 		renderState.update(framebuffer);
 		
-		var g2 = framebuffer.g2;
-		g2.begin();
 		
 		//g2.clear(kha.Color.White); 
 		framebuffer.g4.clear(kha.Color.Black, 1.0);
 		
-		g2.color = kha.Color.White;
-		
 		entity.scale.x = 0.4;
+		
 		gameState.playerX -= (moveX);
 		gameState.playerY += (moveY);
 		
@@ -189,19 +193,13 @@ class App {
 			moveY *= friction;
 		}
 		
-		g2.color = kha.Color.fromFloats(0.2, 0.4, 0.7);
-		g2.drawLine(0, 0, gameState.playerX, gameState.playerY, 3);
-		g2.end();
-		
 		gameState.cameraX = gameState.playerX * 0.1;
 		gameState.cameraY = gameState.playerY * 0.1;
 		
 		if(gameState.loggedInOnFirebase) {
 			chunks.render(framebuffer);
 			
-			entity.position.x = renderState.cameraTargetPos.x;
-			entity.position.y = renderState.cameraTargetPos.y;
-			entity.position.z = renderState.cameraTargetPos.z;
+			kek.math.Vector3Utils.copy3(entity.position, renderState.cameraTargetPos);
 			
 			objects.render(framebuffer);
 		}

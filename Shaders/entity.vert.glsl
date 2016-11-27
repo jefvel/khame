@@ -13,7 +13,7 @@ varying vec3 worldPos;
 
 void main() {
     vec4 wp = vec4(pos, 1.0);
-    wp.xy *= scale;
+    //wp.xy *= scale;
     
     wp.x += offset.x;
     wp.y += offset.y;

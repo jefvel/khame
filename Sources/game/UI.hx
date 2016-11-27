@@ -26,6 +26,7 @@ class UI {
 	
 	public function render(f:kha.Framebuffer) {
 		var g2 = f.g2;
+		return;
 		
 		g2.begin(false);
 		

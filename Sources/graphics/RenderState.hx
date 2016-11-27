@@ -15,7 +15,7 @@ class RenderState {
 	
 	public var near:Float = 0.1;
 	public var far:Float = 25.0;
-	public var fov:Float = 90.0;
+	public var fov:Float = 90.0 * (Math.PI / 180.0);
 	public var ratio:Float = 1.0;
 	
 	public var frustum:kek.graphics.Frustum;
@@ -25,24 +25,33 @@ class RenderState {
 		frustum = new kek.graphics.Frustum();
 		state = g;
 		cameraTargetPos = new Vector3();
+		cameraDirection = new Vector3();
+		cameraPosition = new Vector3();
 	}
 	
+	public var chunkOffsetX:Float;
+	public var chunkOffsetY:Float;
+	
 	public function update(framebuffer:kha.Framebuffer) {
-		var eye = new Vector3(Math.cos(haxe.Timer.stamp()), Math.sin(haxe.Timer.stamp()), 15);
-		eye.x = 0;
-		eye.y = 0;
-		var dir = new Vector3(0, 3, 0);
+		var eye = new Vector3(0.0, 0.0, 15);
+		var dir = new Vector3(0, 5, 0);
 		var up = new Vector3(0, 0, 1.0);
+		
+		ratio = framebuffer.width / framebuffer.height;
 		
 		eye.x += state.cameraX;
 		eye.y += state.cameraY;
-		dir.x += state.cameraX;
-		dir.y += state.cameraY;
+		
+		dir.x = eye.x;
+		dir.y = eye.y + 5;
+		
 		
 		cameraMatrix = kha.math.FastMatrix4.lookAt(
 			FastVector3.fromVector3(eye), 
 			FastVector3.fromVector3(dir), 
 			FastVector3.fromVector3(up));
+		
+		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(fov, ratio, near, far);
 		
 		frustum.setCamInternals(fov, ratio, near, far);
 		frustum.setCamDef(eye, dir, up);
@@ -50,10 +59,7 @@ class RenderState {
 		dir = dir.sub(eye);
 		dir.normalize();
 		
-		cameraDirection = dir;
-		cameraPosition = eye;
-		
-		ratio = framebuffer.width / framebuffer.height;
-		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(fov, ratio, near, far);
+		kek.math.Vector3Utils.copy3(cameraDirection, dir);
+		kek.math.Vector3Utils.copy3(cameraPosition, eye);
 	}
 }

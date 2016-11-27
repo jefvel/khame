@@ -3,7 +3,6 @@ package graphics;
 import kha.graphics4.VertexData;
 import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
-import kha.graphics4.IndexBuffer;
 
 import kek.math.RayIntersections;
 import kha.math.Vector3;
@@ -13,19 +12,16 @@ class Chunk {
 	public static inline var CHUNK_WIDTH = 32;
 	public static inline var CHUNK_HEIGHT = 32;
 	
-	static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
-	static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
+	public static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
+	public static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
 	
 	public var x:Int;
 	public var y:Int;
 	public var worldX:Int;
 	public var worldY:Int;
 	
-	var vertexBuffer:VertexBuffer;
-	var baryBuffer:VertexBuffer;
-	var indexBuffer:IndexBuffer;
+	public var vertexBuffer:VertexBuffer;
 	
-	var buffers:Array<VertexBuffer>;
 	var heights:Array<Float>;
 	
 	static var noise:kek.math.PerlinNoise;
@@ -38,14 +34,6 @@ class Chunk {
 		vStructure.add("pos", VertexData.Float3);
 		vertexBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, vStructure, Usage.DynamicUsage);
 		
-		var bStructure = new kha.graphics4.VertexStructure();
-		bStructure.add("barycentric", VertexData.Float3);
-		baryBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, bStructure, Usage.StaticUsage);
-		
-		indexBuffer = new IndexBuffer(((CHUNK_VERTS_X - 1) * (CHUNK_VERTS_Y - 1)) * 2 * 3, Usage.StaticUsage);
-		
-		buffers = [vertexBuffer, baryBuffer];
-		
 		if(noise == null) {
 			noise = new kek.math.PerlinNoise(453, 7, 0.7);
 			largeNoise = new kek.math.PerlinNoise(499, 2);
@@ -55,7 +43,7 @@ class Chunk {
 	}
 	
 	public inline function chunkId():String {
-		return '$x.$y';
+		return '$x@$y';
 	}
 	
 	public function updatePos(wx:Int, wy:Int) {
@@ -79,9 +67,26 @@ class Chunk {
 		trace('updated chunk');
 		
 		generateMesh();
+		load();
 	}
 	
-	private inline function coordsToIndex(x:Int, y:Int) {
+	var treeRef:firebase.database.Reference;
+	
+	public function unload() {
+		treeRef.off();
+		treeRef = null;
+	}
+	
+	private function load() {
+		var id = chunkId();
+		treeRef = firebase.Firebase.database().ref('chunks/$id');
+		treeRef.on(firebase.EventType.Value, function(data, i){
+			var v = data.val();
+			trace('$v');
+		});
+	}
+	
+	public static inline function coordsToIndex(x:Int, y:Int) {
 		return x + y * (CHUNK_VERTS_X);
 	}
 	
@@ -214,26 +219,11 @@ class Chunk {
 		
 		vertexBuffer.unlock();
 
-		vbData = baryBuffer.lock();
-		for (i in 0...vbData.length) {
-			vbData.set(i, baryCoords[i]);
-		}
 		
-		baryBuffer.unlock();
-		
-		var iData = indexBuffer.lock();
-		for (i in 0...iData.length) {
-			iData[i] = indices[i];
-		}
-		
-		indexBuffer.unlock();
 	}
 
 	public function draw(f:kha.Framebuffer) {
 		var g4 = f.g4;
 		
-		g4.setVertexBuffers(buffers);
-		g4.setIndexBuffer(indexBuffer);
-		g4.drawIndexedVertices();
 	}
 }
