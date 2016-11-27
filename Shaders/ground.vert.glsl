@@ -12,17 +12,17 @@ uniform float time;
 
 varying vec3 worldPos;
 varying vec3 BC;
+varying vec3 NC;
 
 void main() {
+    NC = normal;
     BC = barycentric;
-    vec4 wp = vec4(pos, 1.0);
     
-    wp.x += offset.x;
-    wp.y += offset.y;
+    vec4 wp = vec4(pos, 1.0);
+    wp.xy += offset;
     
     worldPos = wp.xyz;
     
-    wp = camera * wp;
+    gl_Position = perspective * camera * wp;
     
-    gl_Position = perspective * wp;
 }

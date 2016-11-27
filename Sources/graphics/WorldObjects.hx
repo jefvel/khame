@@ -1,5 +1,9 @@
 package graphics;
 
+import kha.graphics4.TextureAddressing;
+import kha.graphics4.TextureFilter;
+import kha.graphics4.TextureFormat;
+
 import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
@@ -13,7 +17,6 @@ import kha.math.Vector3;
 
 class WorldObjects {
 	var pipeline:PipelineState;
-	var structure:VertexStructure;
 	
 	var camera:kha.math.FastMatrix4;
 	var cameraLocation:ConstantLocation;
@@ -35,6 +38,9 @@ class WorldObjects {
 	var vertexBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
 	
+	var tex:kha.Image;
+	var texLocation:kha.graphics4.TextureUnit;
+	
 	public function new(g:game.GameState, rs:graphics.RenderState) {
 		renderState = rs;
 		firstTime = haxe.Timer.stamp();
@@ -44,16 +50,19 @@ class WorldObjects {
 		
 		var layout = new VertexStructure();
 		layout.add("pos", VertexData.Float3);
+		layout.add("uv", VertexData.Float2);
 		
 		pipeline.inputLayout = [layout];
 		pipeline.vertexShader = kha.Shaders.entity_vert;
 		pipeline.fragmentShader = kha.Shaders.entity_frag;
 		pipeline.depthWrite = true;
+		
+		pipeline.blendOperation = kha.graphics4.BlendingOperation.Add;
+		pipeline.blendSource = kha.graphics4.BlendingFactor.SourceAlpha;
+		pipeline.blendDestination = kha.graphics4.BlendingFactor.InverseSourceAlpha;
+		
 		pipeline.depthMode = kha.graphics4.CompareMode.LessEqual;
 		pipeline.compile();
-		
-		structure = new VertexStructure();
-		structure.add("pos", VertexData.Float3);
 		
 		cameraLocation = pipeline.getConstantLocation("camera");
 		perspectiveLocation = pipeline.getConstantLocation("perspective");
@@ -62,30 +71,46 @@ class WorldObjects {
 		offsetLocation = pipeline.getConstantLocation("offset");
 		scaleLocation = pipeline.getConstantLocation("scale");
 		
+		texLocation = pipeline.getTextureUnit("texture");
+		
 		generateMesh();
+		
+		kha.Assets.loadImage(kha.Assets.images.ddName, function(img) {
+			tex = img;
+		});
 	}
 	
 	function generateMesh() {
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
+		vStructure.add("uv", VertexData.Float2);
 		vertexBuffer = new VertexBuffer(4, vStructure, Usage.StaticUsage);
 		
+		var s = 0.5;
+		
 		var verts = [
-			-1.0, 0.0, 1.0,
-			-1.0, 0.0, -1.0,
-			1.0, 0.0, -1.0,
-			1.0, 0.0, 1.0
+			-s, 0, s,
+			0.0, 0.0,
+			
+			-s, 0, -s,
+			0.0, 1.0,
+			
+			s, 0, -s,
+			1.0, 1.0,
+			
+			s, 0, s,
+			1.0, 0.0
 		];
 		
 		var indices = [0, 1, 3,
 					   1, 2, 3];
 		
 		indexBuffer = new IndexBuffer(6, Usage.StaticUsage);
+		
 		var vbData = vertexBuffer.lock();
 		for (i in 0...vbData.length) {
 			vbData.set(i, verts[i]);
 		}
-		
 		vertexBuffer.unlock();
 		
 		var iData = indexBuffer.lock();
@@ -94,7 +119,6 @@ class WorldObjects {
 		}
 		
 		indexBuffer.unlock();
-		
 	}
 	
 	public function render(framebuffer:kha.Framebuffer) {
@@ -113,10 +137,17 @@ class WorldObjects {
 		g4.setIndexBuffer(indexBuffer);
 		g4.setVertexBuffer(vertexBuffer);
 		
+		if(tex != null){
+			g4.setTexture(texLocation, tex);
+			g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
+			TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
+		}
+		
 		for(object in entityList) {
 			offset.x = object.position.x;
 			offset.y = object.position.y;
 			offset.z = object.position.z;
+			
 			
 			g4.setVector3(offsetLocation, offset);
 			g4.setVector2(scaleLocation, object.scale);

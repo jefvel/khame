@@ -180,8 +180,6 @@ class App {
 		//g2.clear(kha.Color.White); 
 		framebuffer.g4.clear(kha.Color.Black, 1.0);
 		
-		entity.scale.x = 0.4;
-		
 		gameState.playerX -= (moveX);
 		gameState.playerY += (moveY);
 		
@@ -200,7 +198,9 @@ class App {
 			chunks.render(framebuffer);
 			
 			kek.math.Vector3Utils.copy3(entity.position, renderState.cameraTargetPos);
-			
+			entity.scale.x = 2.0;
+			entity.scale.y = 2.0;
+			entity.position.z += 1.05;
 			objects.render(framebuffer);
 		}
 		

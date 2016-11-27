@@ -14,7 +14,7 @@ class RenderState {
 	public var cameraTargetPos:Vector3;
 	
 	public var near:Float = 0.1;
-	public var far:Float = 25.0;
+	public var far:Float = 37.0;
 	public var fov:Float = 90.0 * (Math.PI / 180.0);
 	public var ratio:Float = 1.0;
 	
@@ -34,7 +34,7 @@ class RenderState {
 	
 	public function update(framebuffer:kha.Framebuffer) {
 		var eye = new Vector3(0.0, 0.0, 15);
-		var dir = new Vector3(0, 5, 0);
+		var dir = new Vector3(0, 8, 0);
 		var up = new Vector3(0, 0, 1.0);
 		
 		ratio = framebuffer.width / framebuffer.height;
@@ -43,7 +43,7 @@ class RenderState {
 		eye.y += state.cameraY;
 		
 		dir.x = eye.x;
-		dir.y = eye.y + 5;
+		dir.y = eye.y + 9;
 		
 		
 		cameraMatrix = kha.math.FastMatrix4.lookAt(

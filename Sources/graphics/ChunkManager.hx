@@ -37,14 +37,15 @@ class ChunkManager {
 		state = g;
 		renderState = rs;
 		chunks = new Map<String, Chunk>();
-		pipeline = new PipelineState();
 		
 		var layout = new VertexStructure();
 		layout.add("pos", VertexData.Float3);
+		layout.add("normal", VertexData.Float3);
 		
 		var bary = new VertexStructure();
 		bary.add("barycentric", VertexData.Float3);
 		
+		pipeline = new PipelineState();
 		pipeline.inputLayout = [layout, bary];
 		pipeline.vertexShader = kha.Shaders.ground_vert;
 		pipeline.fragmentShader = kha.Shaders.ground_frag;
@@ -69,50 +70,55 @@ class ChunkManager {
 		var bStructure = new kha.graphics4.VertexStructure();
 		bStructure.add("barycentric", VertexData.Float3);
 		
-		baryBuffer = new VertexBuffer(Chunk.CHUNK_VERTS_X * Chunk.CHUNK_VERTS_Y, bStructure, Usage.StaticUsage);
-		indexBuffer = new IndexBuffer(((Chunk.CHUNK_VERTS_X - 1) * (Chunk.CHUNK_VERTS_Y - 1)) * 6, Usage.StaticUsage);
+		baryBuffer = new VertexBuffer(Chunk.CHUNK_WIDTH * Chunk.CHUNK_HEIGHT * 6, bStructure, Usage.StaticUsage);
+		indexBuffer = new IndexBuffer(Chunk.CHUNK_WIDTH * Chunk.CHUNK_HEIGHT * 6, Usage.StaticUsage);
 		
 		generateMesh();
+	}
+	
+	inline function addBaryTriangle(array) {
+		array.push(1.0);
+		array.push(0.0);
+		array.push(0.0);
+		
+		array.push(0.0);
+		array.push(1.0);
+		array.push(0.0);
+				
+		array.push(0.0);
+		array.push(0.0);
+		array.push(1.0);
 	}
 	
 	inline function generateMesh() {
 		var indices = new Array<Int>();
 		var baryCoords = new Array<Float>();
 		
-		var barys = [
-			[1.0, 0.0, 0.0],
-			[0.0, 1.0, 0.0],
-			[0.0, 0.0, 1.0]
-		];
-		
-		var bx = 0;
-		for(y in 0...Chunk.CHUNK_VERTS_Y) {
-			for(x in 0...Chunk.CHUNK_VERTS_X) {
-				baryCoords.push(barys[(bx + x) % 3][0]);
-				baryCoords.push(barys[(bx + x) % 3][1]);
-				baryCoords.push(barys[(bx + x) % 3][2]);
+		var i = 0;
+		for(y in 0...Chunk.CHUNK_WIDTH) {
+			for(x in 0...Chunk.CHUNK_HEIGHT) {
+			
+				addBaryTriangle(baryCoords);
+				addBaryTriangle(baryCoords);
 				
 				if(x < Chunk.CHUNK_VERTS_X - 1) {
 					if(y < Chunk.CHUNK_VERTS_Y - 1) {
-						indices.push(Chunk.coordsToIndex(x, y));
-						indices.push(Chunk.coordsToIndex(x, y + 1));
-						indices.push(Chunk.coordsToIndex(x + 1, y));
+						indices.push(i++);
+						indices.push(i++);
+						indices.push(i++);
 						
-						indices.push(Chunk.coordsToIndex(x + 1, y));
-						indices.push(Chunk.coordsToIndex(x, y + 1));
-						indices.push(Chunk.coordsToIndex(x + 1, y + 1));
+						indices.push(i++);
+						indices.push(i++);
+						indices.push(i++);
 					}
 				}
 			}
-			 
-			bx += 2;
 		}
-
+		
 		var vbData = baryBuffer.lock();
 		for (i in 0...vbData.length) {
 			vbData.set(i, baryCoords[i]);
 		}
-		
 		baryBuffer.unlock();
 		
 		var iData = indexBuffer.lock();
@@ -205,19 +211,21 @@ class ChunkManager {
 		}
 		
 		g4.setVector3(cursorLocation, FastVector3.fromVector3(renderState.cameraTargetPos));
+		g4.setIndexBuffer(indexBuffer);
 		
-		for(y in 0...h) {
-			for(x in 0...w) {
+		for(x in 0...w) {
+			for(y in 0...h) {
 				var chunk = getChunk(x + startX, y + startY);
+				if(chunk.buffers == null) {
+					chunk.buffers = [chunk.vertexBuffer, baryBuffer];
+				}
+				
 				offset.x = chunk.worldX;
 				offset.y = chunk.worldY;
-				
 				g4.setVector2(offsetLocation, offset);
 				
-				chunk.draw(framebuffer);
-				var buffers = [chunk.vertexBuffer, baryBuffer];
-				g4.setVertexBuffers(buffers);
-				g4.setIndexBuffer(indexBuffer);
+				g4.setVertexBuffers(chunk.buffers);
+				
 				g4.drawIndexedVertices();
 			}
 		}

@@ -9,11 +9,13 @@ import kha.math.Vector3;
 
 class Chunk {
 	public static inline var MAX_HEIGHT = 20.0;
-	public static inline var CHUNK_WIDTH = 32;
-	public static inline var CHUNK_HEIGHT = 32;
+	public static inline var CHUNK_WIDTH = 8;
+	public static inline var CHUNK_HEIGHT = 8;
 	
 	public static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
 	public static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
+	
+	public var buffers:Array<kha.graphics4.VertexBuffer>;
 	
 	public var x:Int;
 	public var y:Int;
@@ -21,6 +23,7 @@ class Chunk {
 	public var worldY:Int;
 	
 	public var vertexBuffer:VertexBuffer;
+	public var normalBuffer:VertexBuffer;
 	
 	var heights:Array<Float>;
 	
@@ -32,10 +35,12 @@ class Chunk {
 	public function new(wx:Int = 0, wy:Int = 0)  {
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);
-		vertexBuffer = new VertexBuffer(CHUNK_VERTS_X * CHUNK_VERTS_Y, vStructure, Usage.DynamicUsage);
+		vStructure.add("normal", VertexData.Float3);
+		
+		vertexBuffer = new VertexBuffer(CHUNK_WIDTH * CHUNK_HEIGHT * 6 * 2, vStructure, Usage.DynamicUsage);
 		
 		if(noise == null) {
-			noise = new kek.math.PerlinNoise(453, 7, 0.7);
+			noise = new kek.math.PerlinNoise(453, 5, 0.7);
 			largeNoise = new kek.math.PerlinNoise(499, 2);
 		}
 		
@@ -64,14 +69,12 @@ class Chunk {
 			y = Std.int(wy / CHUNK_HEIGHT);
 		}
 		
-		trace('updated chunk');
-		
 		generateMesh();
+		
 		load();
 	}
 	
 	var treeRef:firebase.database.Reference;
-	
 	public function unload() {
 		treeRef.off();
 		treeRef = null;
@@ -82,7 +85,6 @@ class Chunk {
 		treeRef = firebase.Firebase.database().ref('chunks/$id');
 		treeRef.on(firebase.EventType.Value, function(data, i){
 			var v = data.val();
-			trace('$v');
 		});
 	}
 	
@@ -169,61 +171,74 @@ class Chunk {
 		return null;
 	}
 	
+	inline function addVert(x:Int, y:Int, normal:Vector3, verts:Array<Float>) {
+		verts.push(x);
+		verts.push(y);
+		
+		var h = getLocalHeight(x, y);
+		verts.push(h);
+		
+		verts.push(normal.x);
+		verts.push(normal.y);
+		verts.push(normal.z);
+		
+		return h;
+	}
+	
 	public function generateMesh() {
 		heights = new Array<Float>();
 		var indices = new Array<Int>();
 		var verts = new Array<Float>();
-		var baryCoords = new Array<Float>();
-		
-		var barys = [
-			[1.0, 0.0, 0.0],
-			[0.0, 1.0, 0.0],
-			[0.0, 0.0, 1.0]
-		];
 		
 		var bx = 0;
 		for(y in 0...CHUNK_VERTS_Y) {
 			for(x in 0...CHUNK_VERTS_X) {
-				verts.push(x);
-				verts.push(y);
 				var h = height(x + worldX, y + worldY);
 				maxHeightInChunk = Math.max(maxHeightInChunk, h);
-				
 				heights.push(h);
-				verts.push(h);
-				
-				baryCoords.push(barys[(bx + x) % 3][0]);
-				baryCoords.push(barys[(bx + x) % 3][1]);
-				baryCoords.push(barys[(bx + x) % 3][2]);
-				
-				if(x < CHUNK_VERTS_X - 1) {
-					if(y < CHUNK_VERTS_Y - 1) {
-						indices.push(coordsToIndex(x, y));
-						indices.push(coordsToIndex(x, y + 1));
-						indices.push(coordsToIndex(x + 1, y));
-						
-						indices.push(coordsToIndex(x + 1, y));
-						indices.push(coordsToIndex(x, y + 1));
-						indices.push(coordsToIndex(x + 1, y + 1));
-					}
-				}
 			}
-			 
-			bx += 2;
+		}
+		
+		for(y in 0...CHUNK_HEIGHT) {
+			for(x in 0...CHUNK_WIDTH) {
+				v1.x = 1;
+				v1.y = 0;
+				v1.z = getLocalHeight(x + 1, y) - getLocalHeight(x, y);
+				
+				v2.x = 0;
+				v2.y = 1;
+				v2.z = getLocalHeight(x, y + 1) - getLocalHeight(x, y);
+				kek.math.Vector3Utils.cross3(v3, v1, v2);
+				v3.normalize();
+				
+				addVert(x, y, v3, verts);
+				addVert(x, y + 1, v3, verts);
+				addVert(x + 1, y, v3, verts);
+				
+				v1.x = 1;
+				v1.y = 0;
+				v1.z = getLocalHeight(x + 1, y + 1) - getLocalHeight(x, y + 1);
+				
+				v2.x = 0;
+				v2.y = 1;
+				v2.z = getLocalHeight(x + 1, y + 1) - getLocalHeight(x + 1, y);
+				kek.math.Vector3Utils.cross3(v3, v1, v2);
+				v3.normalize();
+				
+				addVert(x + 1, y, v3, verts);
+				addVert(x, y + 1, v3, verts);
+				addVert(x + 1, y + 1, v3, verts);
+			}
 		}
 		
 		var vbData = vertexBuffer.lock();
 		for (i in 0...vbData.length) {
 			vbData.set(i, verts[i]);
 		}
-		
 		vertexBuffer.unlock();
-
-		
 	}
 
 	public function draw(f:kha.Framebuffer) {
 		var g4 = f.g4;
-		
 	}
 }
