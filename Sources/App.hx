@@ -146,11 +146,11 @@ class App {
 	var moveY:Float = 0;
 	
 	function mouseMove(x:Int, y:Int, dx:Int, dy:Int) {
-		//trace('Mouse: $x, $y. Move: $dx, $dy');
-		renderState.mouseX = x;
-		renderState.mouseY = y;
-		
+	
 		if(mdown && !firstdown) {
+			renderState.mouseX = x;
+			renderState.mouseY = y;
+		
 			moveX += dx;
 			moveY += dy;
 		}
@@ -158,19 +158,18 @@ class App {
 		firstdown = false;
 	}
 	
-	function mouseUp(x:Int, y:Int, i:Int) {
-		//kha.SystemImpl.unlockMouse();
-		//mouse.showSystemCursor();
+	function mouseUp(i:Int, x:Int, y:Int) {
 		mdown = false;
 		firstdown = false;
 	}
 	
-	function mouseDown(x:Int, y:Int, i:Int) {
-		//kha.SystemImpl.lockMouse();
+	function mouseDown(i:Int, x:Int, y:Int) {
 		gameState.addCredits();
-		//mouse.hideSystemCursor();
 		mdown = true;
 		firstdown = true;
+		
+		renderState.mouseX = x;
+		renderState.mouseY = y;
 	}
 
 	function update(): Void {
@@ -178,9 +177,6 @@ class App {
 	}
 
 	function render(framebuffer: Framebuffer): Void {		
-		
-		
-		//g2.clear(kha.Color.White); 
 		framebuffer.g4.clear(kha.Color.Black, 1.0);
 		
 		//gameState.playerX -= (moveX) * 0.1;
