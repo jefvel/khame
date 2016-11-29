@@ -14,6 +14,9 @@ class GameState {
 	public var playerX:Float;
 	public var playerY:Float;
 	
+	public var targetX:Float;
+	public var targetY:Float;
+	
 	public var cameraX:Float;
 	public var cameraY:Float;
 	
@@ -67,6 +70,10 @@ class GameState {
 				this.credits = defaultOrValue(value.credits, 0);
 				this.playerX = defaultOrValue(value.playerX, 100);
 				this.playerY = defaultOrValue(value.playerY, 100);
+				
+				this.targetX = defaultOrValue(value.targetX, 100);
+				this.targetY = defaultOrValue(value.targetY, 100);
+				
 				this.userName = defaultOrValue(value.userName, null);
 				
 				if(this.playerFaction == null) {
@@ -88,6 +95,8 @@ class GameState {
 				credits: this.credits,
 				playerX: this.playerX,
 				playerY: this.playerY,
+				targetX: this.targetX,
+				targetY: this.targetY,
 				playerFaction: this.playerFaction
 			});
 		}

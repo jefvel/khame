@@ -2,6 +2,7 @@ package graphics;
 import kha.math.Vector3;
 import kha.math.FastMatrix4;
 import kha.math.FastVector3;
+import kha.math.FastVector4;
 
 class RenderState {
 	public var cameraMatrix:FastMatrix4;
@@ -19,6 +20,11 @@ class RenderState {
 	public var ratio:Float = 1.0;
 	
 	public var frustum:kek.graphics.Frustum;
+
+	public var screenWidth:Int;
+	public var screenHeight:Int;
+	public var mouseX:Int;
+	public var mouseY:Int;
 	
 	var state:game.GameState;
 	public function new(g:game.GameState) {
@@ -27,39 +33,78 @@ class RenderState {
 		cameraTargetPos = new Vector3();
 		cameraDirection = new Vector3();
 		cameraPosition = new Vector3();
+		
+		inverseMatrix = kha.math.FastMatrix4.empty();
 	}
 	
 	public var chunkOffsetX:Float;
 	public var chunkOffsetY:Float;
 	
 	public function update(framebuffer:kha.Framebuffer) {
+		screenWidth = framebuffer.width;
+		screenHeight = framebuffer.height;
+		
 		var eye = new Vector3(0.0, 0.0, 15);
 		var dir = new Vector3(0, 8, 0);
 		var up = new Vector3(0, 0, 1.0);
 		
 		ratio = framebuffer.width / framebuffer.height;
 		
-		eye.x += state.cameraX;
-		eye.y += state.cameraY;
+		eye.x = cameraTargetPos.x;
+		eye.y = cameraTargetPos.y - 3;
+		eye.z = cameraTargetPos.z + 6;
 		
-		dir.x = eye.x;
-		dir.y = eye.y + 9;
-		
+		cameraPosition.x = eye.x;
+		cameraPosition.y = eye.y;
+		cameraPosition.z = eye.z;
 		
 		cameraMatrix = kha.math.FastMatrix4.lookAt(
 			FastVector3.fromVector3(eye), 
-			FastVector3.fromVector3(dir), 
+			FastVector3.fromVector3(cameraTargetPos), 
 			FastVector3.fromVector3(up));
 		
 		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(fov, ratio, near, far);
 		
 		frustum.setCamInternals(fov, ratio, near, far);
-		frustum.setCamDef(eye, dir, up);
+		frustum.setCamDef(eye, cameraTargetPos, up);
 		
-		dir = dir.sub(eye);
+		dir = cameraTargetPos.sub(eye);
 		dir.normalize();
 		
+		inverseMatrix.setFrom(perspectiveMatrix);
+		inverseMatrix = inverseMatrix.multmat(kha.math.FastMatrix4.lookAt(
+			new FastVector3(0, 0, 0),
+			FastVector3.fromVector3(dir), 
+			FastVector3.fromVector3(up)));
+		inverseMatrix = inverseMatrix.inverse();
+		
 		kek.math.Vector3Utils.copy3(cameraDirection, dir);
-		kek.math.Vector3Utils.copy3(cameraPosition, eye);
+	}
+	
+	var inverseMatrix:kha.math.FastMatrix4;
+	
+	var p1:FastVector4 = new FastVector4();
+	var p2:FastVector4 = new FastVector4();
+	public function screenToWorldRay(x:Float, y:Float, ray:Vector3) {
+		var dx = (2.0 * (x / screenWidth)) - 1.0;
+		var dy = 1.0 - (2.0 * (y / screenHeight));
+		
+		p1.x = dx;
+		p1.y = dy;
+		p1.z = 1.0;
+		p1.w = 1.0;
+		
+		p1 = inverseMatrix.multvec(p1);
+		
+		p1.w = 1.0 / p1.w;
+		p1.x *= p1.w;
+		p1.y *= p1.w;
+		p1.z *= p1.w;
+		
+		ray.x = p1.x;
+		ray.y = p1.y;
+		ray.z = p1.z;
+		
+		ray.normalize();
 	}
 }

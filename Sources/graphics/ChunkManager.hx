@@ -170,6 +170,16 @@ class ChunkManager {
 		unusedChunks.push(chunk);
 	}
 	
+	public function intersection(position, direction) {
+		for(chunk in chunks) {
+			var hit = chunk.intersects(position, direction);
+			if(hit != null) {
+				return hit;
+			}
+		}
+		return null;
+	}
+	
 	var firstTime = 0.0;
 	public function render(framebuffer:kha.Framebuffer) {
 		var time = haxe.Timer.stamp() - firstTime;
@@ -191,6 +201,11 @@ class ChunkManager {
 		
 		var hit:kha.math.Vector3 = null;
 		var offset = new kha.math.FastVector2();
+		var direction = new Vector3();
+		renderState.screenToWorldRay(renderState.mouseX, renderState.mouseY, direction);
+		
+		var cdir = renderState.cameraDirection;
+		cdir.normalize();
 		
 		for(chunk in chunks) {
 			if(chunk.y < startY || chunk.y > startY + h || chunk.x < startX ||chunk.x > startX + w) {
@@ -200,14 +215,15 @@ class ChunkManager {
 				continue;
 			}
 			
-			hit = chunk.intersects(renderState.cameraPosition, renderState.cameraDirection);
+			
+			hit = chunk.intersects(renderState.cameraPosition, direction);
 			if(hit != null) {
 				break;
 			}
 		}
 		
 		if(hit != null) {
-			kek.math.Vector3Utils.copy3(renderState.cameraTargetPos, hit);
+			//kek.math.Vector3Utils.copy3(renderState.cameraTargetPos, hit);
 		}
 		
 		g4.setVector3(cursorLocation, FastVector3.fromVector3(renderState.cameraTargetPos));

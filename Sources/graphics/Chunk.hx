@@ -9,8 +9,8 @@ import kha.math.Vector3;
 
 class Chunk {
 	public static inline var MAX_HEIGHT = 20.0;
-	public static inline var CHUNK_WIDTH = 8;
-	public static inline var CHUNK_HEIGHT = 8;
+	public static inline var CHUNK_WIDTH = 16;
+	public static inline var CHUNK_HEIGHT = 16;
 	
 	public static inline var CHUNK_VERTS_X = CHUNK_WIDTH + 1;
 	public static inline var CHUNK_VERTS_Y = CHUNK_HEIGHT + 1;
