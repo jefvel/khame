@@ -192,13 +192,25 @@ class App {
 			gameState.targetX = p.x;
 			gameState.targetY = p.y;
 			
+			renderState.cursorWorldPosition.x = p.x;
+			renderState.cursorWorldPosition.y = p.y;
+			renderState.cursorWorldPosition.z = p.z;
+			
 		}else{
 			moveX *= friction;
 			moveY *= friction;
 		}
 		
-		gameState.playerX += (gameState.targetX - gameState.playerX) * 0.1;
-		gameState.playerY += (gameState.targetY - gameState.playerY) * 0.1;
+		var v = new kha.math.Vector2(gameState.targetX - gameState.playerX, gameState.targetY - gameState.playerY);
+		var l = v.length;
+		l *= 0.2;
+		l = Math.min(l, 0.2);
+		v.normalize();
+		v = v.mult(l);
+
+		
+		gameState.playerX += v.x;
+		gameState.playerY += v.y;
 		
 		if(!gameState.loggedInOnFirebase) {
 			return;

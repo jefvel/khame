@@ -39,7 +39,14 @@ void main() {
     vec3 c = mix(color, color2, 0.5 + t);
     c = vec3(0.8, 0.86, 0.96);
     gl_FragColor = vec4(mix(c, vec3(241.0 / 256.0, 238.0 / 256.0, 238.0 / 256.0), edgeFactor()), 1.0);
-    //gl_FragColor.rgb -= vec3(smoothstep(0.8, 0.0, min(distance(cursorPos, worldPos), 1.0)));
     vec3 lightDirection = -normalize(vec3(-1, -1, -1));
     gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(78.0 / 256.0, 142.0 / 256.0 , 190.0 / 256.0), 0.1 + smoothstep(dot(lightDirection, NC), 0.1, 0.5) * 0.8);
+    
+    float d = distance(cursorPos, worldPos);
+    d -= 0.8 + sin(time * 2.0) * 0.1;
+    d *= 50.0;
+    d = min(1.0, max(d, -1.0));
+    d = 1.0 - abs(d);
+
+    gl_FragColor.rgb -= vec3(0.5) * d;
 }

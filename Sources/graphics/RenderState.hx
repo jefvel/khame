@@ -13,6 +13,7 @@ class RenderState {
 	public var cameraDirection:Vector3;
 	
 	public var cameraTargetPos:Vector3;
+	public var cursorWorldPosition:Vector3;
 	
 	public var near:Float = 0.1;
 	public var far:Float = 37.0;
@@ -33,6 +34,7 @@ class RenderState {
 		cameraTargetPos = new Vector3();
 		cameraDirection = new Vector3();
 		cameraPosition = new Vector3();
+		cursorWorldPosition = new Vector3();
 		
 		inverseMatrix = kha.math.FastMatrix4.empty();
 	}
