@@ -208,6 +208,7 @@ class Chunk {
 				v2.x = 0;
 				v2.y = 1;
 				v2.z = getLocalHeight(x, y + 1) - getLocalHeight(x, y);
+				
 				kek.math.Vector3Utils.cross3(v3, v1, v2);
 				v3.normalize();
 				

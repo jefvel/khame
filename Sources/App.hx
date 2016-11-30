@@ -201,6 +201,7 @@ class App {
 			moveY *= friction;
 		}
 		
+		
 		var v = new kha.math.Vector2(gameState.targetX - gameState.playerX, gameState.targetY - gameState.playerY);
 		var l = v.length;
 		l *= 0.2;
@@ -211,6 +212,10 @@ class App {
 		
 		gameState.playerX += v.x;
 		gameState.playerY += v.y;
+		
+		if(l < 0.2) {
+			renderState.cursorWorldPosition.z -= 0.07;
+		}
 		
 		if(!gameState.loggedInOnFirebase) {
 			return;
@@ -242,7 +247,6 @@ class App {
 		if(gameState.loggedInOnFirebase) {
 			chunks.render(framebuffer);
 			
-			//kek.math.Vector3Utils.copy3(entity.position, renderState.cameraTargetPos);
 			objects.render(framebuffer);
 		}
 		

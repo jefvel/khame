@@ -71,7 +71,7 @@ class WorldObjects {
 		offsetLocation = pipeline.getConstantLocation("offset");
 		scaleLocation = pipeline.getConstantLocation("scale");
 		
-		texLocation = pipeline.getTextureUnit("texture");
+		texLocation = pipeline.getTextureUnit("tex");
 		
 		generateMesh();
 		
