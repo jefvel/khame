@@ -105,9 +105,10 @@ class App {
 						e.position.x = tree.x;
 						e.position.y = tree.y;
 						e.position.z = tree.z;
+						
+						e.t = Math.random() * 10.0;
 						objects.addObject(e);
 					}
-					trace('added trees $data');
 				});
 				
 				updateAvatar();
@@ -235,6 +236,11 @@ class App {
 			moveY *= friction;
 		}
 		
+		
+		var time = haxe.Timer.stamp();
+		for(tree in objects.entityList) {
+			tree.rotation = Math.sin(tree.t + time) * 0.1;
+		}
 		
 		var v = new kha.math.Vector2(gameState.targetX - gameState.playerX, gameState.targetY - gameState.playerY);
 		var l = v.length;

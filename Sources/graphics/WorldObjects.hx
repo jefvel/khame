@@ -28,8 +28,9 @@ class WorldObjects {
 	var offsetLocation:ConstantLocation;
 	var scaleLocation:ConstantLocation;
 	var textureOriginLocation:ConstantLocation;
+	var rotationLocation:ConstantLocation;
 	
-	var entityList:Array<WorldObject>;
+	public var entityList:Array<WorldObject>;
 	
 	var state:game.GameState;
 	var firstTime:Float;
@@ -72,6 +73,7 @@ class WorldObjects {
 		offsetLocation = pipeline.getConstantLocation("offset");
 		scaleLocation = pipeline.getConstantLocation("scale");
 		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
+		rotationLocation = pipeline.getConstantLocation("rotation");
 		
 		texLocation = pipeline.getTextureUnit("tex");
 		
@@ -153,6 +155,7 @@ class WorldObjects {
 			g4.setVector3(offsetLocation, offset);
 			g4.setVector2(scaleLocation, object.scale);
 			g4.setVector2(textureOriginLocation, object.origin);
+			g4.setFloat(rotationLocation, object.rotation);
 			
 			g4.drawIndexedVertices();
 		}
