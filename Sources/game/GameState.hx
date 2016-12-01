@@ -21,11 +21,12 @@ class GameState {
 	public var cameraY:Float;
 	
 	public var powerCounts:Map<game.WorldPowers.Faction, Int>;
+	public var trees:Array<graphics.Tree>;
 	
 	var playerRef:firebase.database.Reference;
 	
 	public function new() {
-		
+		trees = new Array<graphics.Tree>();
 	}
 	
 	public function addCredits() {
@@ -56,7 +57,7 @@ class GameState {
 		}
 	}
 	
-	public function loadState() {
+	public function loadState(?cb:GameState -> Void) {
 		checkPlayerReference();
 		if(playerRef != null) {
 			playerRef.once(Value).then(function(e){
@@ -80,8 +81,17 @@ class GameState {
 					this.playerFaction = defaultOrValue(value.playerFaction, WorldPowers.Faction.None);
 				}
 				
-				this.loggedInOnFirebase = true;
+				if(value.trees != null) {
+					var t:Array<Dynamic> = value.trees;
+					for(tree in t) {
+						trees.push(new graphics.Tree(tree.x, tree.y, tree.z, tree.size));
+					}
+				}
 				
+				this.loggedInOnFirebase = true;
+				if(cb != null) {
+					cb(this);
+				}
 			});
 		}
 	}
@@ -97,7 +107,8 @@ class GameState {
 				playerY: this.playerY,
 				targetX: this.targetX,
 				targetY: this.targetY,
-				playerFaction: this.playerFaction
+				playerFaction: this.playerFaction,
+				trees: this.trees
 			});
 		}
 	}

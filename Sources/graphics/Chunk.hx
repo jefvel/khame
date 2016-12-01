@@ -32,6 +32,8 @@ class Chunk {
 	
 	public var maxHeightInChunk:Float;
 	
+	var trees:Array<Tree>;
+	
 	public function new(wx:Int = 0, wy:Int = 0)  {
 		var vStructure = new kha.graphics4.VertexStructure();
 		vStructure.add("pos", VertexData.Float3);

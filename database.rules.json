@@ -4,7 +4,7 @@
     ".write": false,
     "chunks": {
       ".read":"auth != null",
-      ".write": "auth.uid === 'kM9bkGCP6MhBqBMttfuD8R2Snmn2'"
+      ".write": "auth.uid === 'kM9bkGCP6MhBqBMttfuD8R2Snmn2' || auth !== null"
     },
   	"players": {
   		"$player": {

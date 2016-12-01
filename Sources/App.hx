@@ -94,7 +94,22 @@ class App {
 					gameState.userName = generateName();
 				}
 				
-				gameState.loadState();
+				gameState.loadState(function(data) {
+					for(tree in data.trees) {
+						var e = new graphics.WorldObject();
+						
+						e.origin.y = 0.11;
+						e.scale.x = tree.size;
+						e.scale.y = tree.size;
+						
+						e.position.x = tree.x;
+						e.position.y = tree.y;
+						e.position.z = tree.z;
+						objects.addObject(e);
+					}
+					trace('added trees $data');
+				});
+				
 				updateAvatar();
 				
 				if(!inited){
@@ -165,7 +180,6 @@ class App {
 	}
 	
 	function mouseDown(i:Int, x:Int, y:Int) {
-		
 		if(i == 1) {
 			var e = new graphics.WorldObject();
 			e.origin.y = 0.11;
@@ -178,6 +192,9 @@ class App {
 			p = chunks.intersection(renderState.cameraPosition, p);
 			e.position = p;
 			objects.addObject(e);
+			
+			gameState.trees.push(new graphics.Tree(e.position.x, e.position.y, e.position.z, e.scale.x));
+
 			return;
 		}
 		
@@ -221,18 +238,20 @@ class App {
 		
 		var v = new kha.math.Vector2(gameState.targetX - gameState.playerX, gameState.targetY - gameState.playerY);
 		var l = v.length;
+		if(l < 0.1) {
+			renderState.cursorWorldPosition.z -= 0.07;
+		}
+		
+		var speed = 0.1;
 		l *= 0.2;
-		l = Math.min(l, 0.2);
+		
+		l = Math.min(l, speed);
 		v.normalize();
 		v = v.mult(l);
-
 		
 		gameState.playerX += v.x;
 		gameState.playerY += v.y;
 		
-		if(l < 0.2) {
-			renderState.cursorWorldPosition.z -= 0.07;
-		}
 		
 		if(!gameState.loggedInOnFirebase) {
 			return;
@@ -246,7 +265,8 @@ class App {
 
 		var hit = chunks.intersection(entity.position, direction);
 		if(hit != null) {
-			entity.position.z = hit.z + 0.5;
+			entity.origin.y = 0.1;
+			entity.position.z = hit.z;
 		}
 		
 		entity.scale.x = 3.0;

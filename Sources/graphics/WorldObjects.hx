@@ -150,7 +150,6 @@ class WorldObjects {
 			offset.y = object.position.y;
 			offset.z = object.position.z;
 			
-			
 			g4.setVector3(offsetLocation, offset);
 			g4.setVector2(scaleLocation, object.scale);
 			g4.setVector2(textureOriginLocation, object.origin);
@@ -163,5 +162,9 @@ class WorldObjects {
 	
 	public function addObject(o:WorldObject) {
 		entityList.push(o);
+	}
+	
+	public function removeObject(o:WorldObject) {
+		entityList.remove(o);
 	}
 }
