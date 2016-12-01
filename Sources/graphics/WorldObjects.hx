@@ -27,6 +27,7 @@ class WorldObjects {
 	var timeLocation:ConstantLocation;
 	var offsetLocation:ConstantLocation;
 	var scaleLocation:ConstantLocation;
+	var textureOriginLocation:ConstantLocation;
 	
 	var entityList:Array<WorldObject>;
 	
@@ -70,12 +71,13 @@ class WorldObjects {
 		timeLocation = pipeline.getConstantLocation("time");
 		offsetLocation = pipeline.getConstantLocation("offset");
 		scaleLocation = pipeline.getConstantLocation("scale");
+		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
 		
 		texLocation = pipeline.getTextureUnit("tex");
 		
 		generateMesh();
 		
-		kha.Assets.loadImage(kha.Assets.images.ddName, function(img) {
+		kha.Assets.loadImage(kha.Assets.images.treeleavesName, function(img) {
 			tex = img;
 		});
 	}
@@ -86,19 +88,19 @@ class WorldObjects {
 		vStructure.add("uv", VertexData.Float2);
 		vertexBuffer = new VertexBuffer(4, vStructure, Usage.StaticUsage);
 		
-		var s = 0.5;
+		var s = 1.0;
 		
 		var verts = [
-			-s, 0, s,
+			0.0, 0,   s,
 			0.0, 0.0,
 			
-			-s, 0, -s,
+			0.0, 0,   0.0,
 			0.0, 1.0,
 			
-			s, 0, -s,
+			s,   0.0, 0.0,
 			1.0, 1.0,
 			
-			s, 0, s,
+			s,   0,   s,
 			1.0, 0.0
 		];
 		
@@ -151,6 +153,7 @@ class WorldObjects {
 			
 			g4.setVector3(offsetLocation, offset);
 			g4.setVector2(scaleLocation, object.scale);
+			g4.setVector2(textureOriginLocation, object.origin);
 			
 			g4.drawIndexedVertices();
 		}

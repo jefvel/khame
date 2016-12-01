@@ -37,6 +37,7 @@ class App {
 		
 		objects = new graphics.WorldObjects(gameState, renderState);
 		entity = new graphics.WorldObject();
+		entity.origin.y = 0.0;
 		objects.addObject(entity);
 		
 		springs = new SpringSystem();
@@ -164,6 +165,22 @@ class App {
 	}
 	
 	function mouseDown(i:Int, x:Int, y:Int) {
+		
+		if(i == 1) {
+			var e = new graphics.WorldObject();
+			e.origin.y = 0.11;
+			e.scale.x = 1 + Math.random() * 2.0;
+			e.scale.y = e.scale.x;
+			
+			var p = new Vector3();
+			renderState.screenToWorldRay(x, y, p);
+			
+			p = chunks.intersection(renderState.cameraPosition, p);
+			e.position = p;
+			objects.addObject(e);
+			return;
+		}
+		
 		gameState.addCredits();
 		mdown = true;
 		firstdown = true;
@@ -229,11 +246,11 @@ class App {
 
 		var hit = chunks.intersection(entity.position, direction);
 		if(hit != null) {
-			entity.position.z = hit.z + 1.0;
+			entity.position.z = hit.z + 0.5;
 		}
 		
-		entity.scale.x = 2.0;
-		entity.scale.y = 2.0;
+		entity.scale.x = 3.0;
+		entity.scale.y = 3.0;
 		
 		renderState.cameraTargetPos.x = entity.position.x;
 		renderState.cameraTargetPos.y = entity.position.y;
