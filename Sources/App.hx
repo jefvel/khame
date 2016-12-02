@@ -192,6 +192,7 @@ class App {
 			
 			p = chunks.intersection(renderState.cameraPosition, p);
 			e.position = p;
+			e.t = Math.random() * 10.0;
 			objects.addObject(e);
 			
 			gameState.trees.push(new graphics.Tree(e.position.x, e.position.y, e.position.z, e.scale.x));
@@ -284,12 +285,13 @@ class App {
 		
 		gameState.cameraX = gameState.playerX;
 		gameState.cameraY = gameState.playerY;
+		entity.rotation = l * 2.0 * Math.sin(time * l * 300.0);
+		entity.origin.y = 0.1 -  l * Math.abs(Math.sin(time * l));
 		
 		renderState.update(framebuffer);
 		
 		if(gameState.loggedInOnFirebase) {
 			chunks.render(framebuffer);
-			
 			objects.render(framebuffer);
 		}
 		
