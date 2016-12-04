@@ -40,7 +40,8 @@ class WorldObjects {
 	var vertexBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
 	
-	var tex:kha.Image;
+	var elfTex:kha.Image;
+	var treeTex:kha.Image;
 	var texLocation:kha.graphics4.TextureUnit;
 	
 	public function new(g:game.GameState, rs:graphics.RenderState) {
@@ -79,8 +80,12 @@ class WorldObjects {
 		
 		generateMesh();
 		
+		kha.Assets.loadImage(kha.Assets.images.elfName, function(img) {
+			elfTex = img;
+		});
+		
 		kha.Assets.loadImage(kha.Assets.images.treeleavesName, function(img) {
-			tex = img;
+			treeTex = img;
 		});
 	}
 	
@@ -141,25 +146,31 @@ class WorldObjects {
 		g4.setIndexBuffer(indexBuffer);
 		g4.setVertexBuffer(vertexBuffer);
 		
-		if(tex != null){
-			g4.setTexture(texLocation, tex);
-			g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
-			TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
-		}
 		
-		for(object in entityList) {
-			offset.x = object.position.x;
-			offset.y = object.position.y;
-			offset.z = object.position.z;
+		if(elfTex != null && treeTex != null){
+			for(object in entityList) {
+				offset.x = object.position.x;
+				offset.y = object.position.y;
+				offset.z = object.position.z;
 			
-			g4.setVector3(offsetLocation, offset);
-			g4.setVector2(scaleLocation, object.scale);
-			g4.setVector2(textureOriginLocation, object.origin);
-			g4.setFloat(rotationLocation, object.rotation);
+				switch(object.sprite) {
+					case Tree: 
+						g4.setTexture(texLocation, treeTex);
+					case Elf:
+						g4.setTexture(texLocation, elfTex);
+				}
 			
-			g4.drawIndexedVertices();
+				g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
+				TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
+				
+				g4.setVector3(offsetLocation, offset);
+				g4.setVector2(scaleLocation, object.scale);
+				g4.setVector2(textureOriginLocation, object.origin);
+				g4.setFloat(rotationLocation, object.rotation);
+				
+				g4.drawIndexedVertices();
+			}
 		}
-		
 		g4.end();
 	}
 	

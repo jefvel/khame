@@ -38,6 +38,7 @@ class App {
 		objects = new graphics.WorldObjects(gameState, renderState);
 		entity = new graphics.WorldObject();
 		entity.origin.y = 0.0;
+		entity.sprite = Elf;
 		objects.addObject(entity);
 		
 		springs = new SpringSystem();
@@ -210,13 +211,6 @@ class App {
 
 	function update(): Void {
 		springs.update();
-	}
-
-	function render(framebuffer: Framebuffer): Void {		
-		framebuffer.g4.clear(kha.Color.Black, 1.0);
-		
-		//gameState.playerX -= (moveX) * 0.1;
-		//gameState.playerY += (moveY) * 0.1;
 		
 		if(mdown) {
 			moveY = 0;
@@ -286,7 +280,15 @@ class App {
 		gameState.cameraX = gameState.playerX;
 		gameState.cameraY = gameState.playerY;
 		entity.rotation = l * 2.0 * Math.sin(time * l * 300.0);
-		entity.origin.y = 0.1 -  l * Math.abs(Math.sin(time * l));
+		entity.origin.y = 0 -  l * Math.abs(Math.sin(time * l));
+	}
+
+	function render(framebuffer: Framebuffer): Void {		
+		framebuffer.g4.clear(kha.Color.Black, 1.0);
+		
+		//gameState.playerX -= (moveX) * 0.1;
+		//gameState.playerY += (moveY) * 0.1;
+		
 		
 		renderState.update(framebuffer);
 		

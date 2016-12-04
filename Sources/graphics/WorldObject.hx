@@ -1,5 +1,10 @@
 package graphics;
 
+enum SpriteType {
+	Tree;
+	Elf;
+}
+
 class WorldObject {
 	public var position:kha.math.Vector3;
 	public var scale:kha.math.FastVector2;
@@ -8,6 +13,8 @@ class WorldObject {
 	public var rotation:Float;
 	
 	public var t:Float = 0.0;
+	
+	public var sprite:SpriteType = Tree;
 	
 	public function new() {
 		rotation = 0.0;
