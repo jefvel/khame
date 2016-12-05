@@ -231,6 +231,9 @@ class App {
 			moveY *= friction;
 		}
 		
+		//gameState.playerX -= (moveX) * 0.1;
+		//gameState.playerY += (moveY) * 0.1;
+		
 		
 		var time = haxe.Timer.stamp();
 		for(tree in objects.entityList) {
@@ -253,7 +256,6 @@ class App {
 		gameState.playerX += v.x;
 		gameState.playerY += v.y;
 		
-		
 		if(!gameState.loggedInOnFirebase) {
 			return;
 		}
@@ -270,7 +272,11 @@ class App {
 			entity.position.z = hit.z;
 		}
 		
-		entity.scale.x = 3.0;
+		if(v.x > 0) {
+			entity.scale.x = 3.0;
+		}else if(v.x < 0) {
+			entity.scale.x = -3.0;
+		}
 		entity.scale.y = 3.0;
 		
 		renderState.cameraTargetPos.x = entity.position.x;
@@ -284,18 +290,14 @@ class App {
 	}
 
 	function render(framebuffer: Framebuffer): Void {		
-		framebuffer.g4.clear(kha.Color.Black, 1.0);
-		
-		//gameState.playerX -= (moveX) * 0.1;
-		//gameState.playerY += (moveY) * 0.1;
-		
+		framebuffer.g4.clear(kha.Color.White, 1.0);
+		if(!gameState.loggedInOnFirebase) {
+			return;
+		}
 		
 		renderState.update(framebuffer);
-		
-		if(gameState.loggedInOnFirebase) {
-			chunks.render(framebuffer);
-			objects.render(framebuffer);
-		}
+		chunks.render(framebuffer);
+		objects.render(framebuffer);
 		
 		if(ui != null) {
 			ui.render(framebuffer);
