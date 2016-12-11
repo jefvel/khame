@@ -29,6 +29,7 @@ class WorldObjects {
 	var scaleLocation:ConstantLocation;
 	var textureOriginLocation:ConstantLocation;
 	var rotationLocation:ConstantLocation;
+	var tileDataLocation:ConstantLocation;
 	
 	public var entityList:Array<WorldObject>;
 	
@@ -75,6 +76,7 @@ class WorldObjects {
 		scaleLocation = pipeline.getConstantLocation("scale");
 		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
 		rotationLocation = pipeline.getConstantLocation("rotation");
+		tileDataLocation = pipeline.getConstantLocation("tileData");
 		
 		texLocation = pipeline.getTextureUnit("tex");
 		
@@ -130,9 +132,11 @@ class WorldObjects {
 		indexBuffer.unlock();
 	}
 	
+	var aa = 0;
 	public function render(framebuffer:kha.Framebuffer) {
 		var time = haxe.Timer.stamp() - firstTime;
 		var g4 = framebuffer.g4;
+		aa = Std.int(time * 16.0);
 		
 		g4.begin();
 		
@@ -143,6 +147,7 @@ class WorldObjects {
 		
 		var offset = new kha.math.FastVector3();
 		var hit:kha.math.Vector3 = null;
+		var tileData = new kha.math.FastVector4();
 		g4.setIndexBuffer(indexBuffer);
 		g4.setVertexBuffer(vertexBuffer);
 		
@@ -162,6 +167,19 @@ class WorldObjects {
 			
 				g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
 				TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
+				
+				if(object.spriteSheet == null) {
+					tileData.x = tileData.y = 0;
+					tileData.z = tileData.w = 1.0;
+				} else {
+					var t = object.getCurrentFrame();
+					tileData.x = t.uvx;
+					tileData.y = t.uvy;
+					tileData.z = object.spriteSheet.tilesX;
+					tileData.w = object.spriteSheet.tilesY;
+				}
+				
+				g4.setVector4(tileDataLocation, tileData);
 				
 				g4.setVector3(offsetLocation, offset);
 				g4.setVector2(scaleLocation, object.scale);

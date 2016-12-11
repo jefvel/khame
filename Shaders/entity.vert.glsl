@@ -31,4 +31,5 @@ void main() {
     wp.xy += (rot * vec3(pos.xz - spriteOrigin, 0.0)).xy * scale.xy;
     
     gl_Position = perspective * wp;
+    gl_Position.z -= 0.005;
 }

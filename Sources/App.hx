@@ -26,6 +26,7 @@ class App {
 	var inited = false;
 	
 	var entity:graphics.WorldObject;
+	var guyTileSheet:kek.graphics.TileSheet;
 	
 	public function new() {
 		gameState = new game.GameState();
@@ -125,6 +126,11 @@ class App {
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
+			var t = haxe.Timer.stamp();
+			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
+			entity.spriteSheet = guyTileSheet;
+			t = haxe.Timer.stamp() - t;
+			trace('$t');
 		});
 		
 		kha.input.Keyboard.get().notify(function(k, d) {
@@ -219,12 +225,15 @@ class App {
 			renderState.screenToWorldRay(renderState.mouseX, renderState.mouseY, r);
 			var p = chunks.intersection(renderState.cameraPosition, r);
 			
-			gameState.targetX = p.x;
-			gameState.targetY = p.y;
-			
-			renderState.cursorWorldPosition.x = p.x;
-			renderState.cursorWorldPosition.y = p.y;
-			renderState.cursorWorldPosition.z = p.z;
+			if(p != null) {
+				
+				gameState.targetX = p.x;
+				gameState.targetY = p.y;
+				
+				renderState.cursorWorldPosition.x = p.x;
+				renderState.cursorWorldPosition.y = p.y;
+				renderState.cursorWorldPosition.z = p.z;
+			}
 			
 		}else{
 			moveX *= friction;
@@ -244,6 +253,9 @@ class App {
 		var l = v.length;
 		if(l < 0.1) {
 			renderState.cursorWorldPosition.z -= 0.07;
+			entity.playAnimation("Stand");
+		}else{
+			entity.playAnimation("Walk");
 		}
 		
 		var speed = 0.1;
@@ -285,8 +297,8 @@ class App {
 		
 		gameState.cameraX = gameState.playerX;
 		gameState.cameraY = gameState.playerY;
-		entity.rotation = l * 2.0 * Math.sin(time * l * 300.0);
-		entity.origin.y = 0 -  l * Math.abs(Math.sin(time * l));
+		entity.rotation = l * 0.2 * Math.sin(time * l * 300.0);
+		entity.origin.y = 0 -  0.3* l * Math.abs(Math.sin(time * l));
 	}
 
 	function render(framebuffer: Framebuffer): Void {		

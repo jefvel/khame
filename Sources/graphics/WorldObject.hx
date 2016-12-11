@@ -16,10 +16,55 @@ class WorldObject {
 	
 	public var sprite:SpriteType = Tree;
 	
+	public var spriteSheet:kek.graphics.TileSheet;
+	public var currentAnimation:String;
+	var animationStart:Float;
+	var cAnimation:kek.graphics.TileSheet.Animation;
+				
+	
 	public function new() {
 		rotation = 0.0;
 		origin = new kha.math.FastVector2(0.5, 0.5);
 		position = new kha.math.Vector3();
 		scale = new kha.math.FastVector2(1.0, 1.0);
+	}
+	
+	public function getCurrentFrame() {
+		// Return first frame if no animation specified.
+		if(cAnimation == null) {
+			return spriteSheet.getFrame(0);
+		}
+
+		var d = Std.int(cAnimation.to - cAnimation.from);
+		if(d == 0) {
+			return spriteSheet.getFrame(cAnimation.from);
+		}
+		
+		var cf = Std.int((haxe.Timer.stamp() - animationStart) * 1000) % cAnimation.totalLength;
+		
+		var totalTime = 0; 
+		for(f in 0...d + 1) {
+			var frame = spriteSheet.frames[f + cAnimation.from];
+			totalTime += frame.duration;
+			if(cf <= totalTime) {
+				return frame;
+			}
+		}
+		
+		return spriteSheet.frames[0];
+	}
+	
+	public function playAnimation(name:String) {
+		if(spriteSheet == null) {
+			return;
+		}
+		
+		if(currentAnimation == name) {
+			return;
+		}
+		
+		animationStart = haxe.Timer.stamp();
+		currentAnimation = name;
+		cAnimation = spriteSheet.getAnimation(name);
 	}
 }
