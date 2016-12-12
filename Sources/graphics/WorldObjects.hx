@@ -158,15 +158,21 @@ class WorldObjects {
 				offset.y = object.position.y;
 				offset.z = object.position.z;
 			
-				switch(object.sprite) {
-					case Tree: 
-						g4.setTexture(texLocation, treeTex);
-					case Elf:
-						g4.setTexture(texLocation, elfTex);
+				if(object.spriteSheet != null && object.spriteSheet.image != null) {
+					g4.setTexture(texLocation, object.spriteSheet.image);
+				}else{
+					switch(object.sprite) {
+						case Tree: 
+							g4.setTexture(texLocation, treeTex);
+						case Elf:
+							g4.setTexture(texLocation, elfTex);
+					}
 				}
+			
 			
 				g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
 				TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
+				
 				
 				if(object.spriteSheet == null) {
 					tileData.x = tileData.y = 0;

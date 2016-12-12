@@ -126,11 +126,8 @@ class App {
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
-			var t = haxe.Timer.stamp();
-			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
+			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.boom, kha.Assets.blobs.boom_json);
 			entity.spriteSheet = guyTileSheet;
-			t = haxe.Timer.stamp() - t;
-			trace('$t');
 		});
 		
 		kha.input.Keyboard.get().notify(function(k, d) {
@@ -253,9 +250,12 @@ class App {
 		var l = v.length;
 		if(l < 0.1) {
 			renderState.cursorWorldPosition.z -= 0.07;
-			entity.playAnimation("Stand");
-		}else{
-			entity.playAnimation("Walk");
+		}
+		
+		if(l < 0.4) {
+			entity.playAnimation("Stand", true);
+		} else {
+			entity.playAnimation("Walk", true);
 		}
 		
 		var speed = 0.1;

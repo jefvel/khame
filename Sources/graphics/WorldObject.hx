@@ -18,10 +18,14 @@ class WorldObject {
 	
 	public var spriteSheet:kek.graphics.TileSheet;
 	public var currentAnimation:String;
+	
 	var animationStart:Float;
 	var cAnimation:kek.graphics.TileSheet.Animation;
-				
+	var animationInQueue:String;
+	var queueStartLoop:Int;
 	
+	var animationLoops = 0;
+				
 	public function new() {
 		rotation = 0.0;
 		origin = new kha.math.FastVector2(0.5, 0.5);
@@ -35,12 +39,26 @@ class WorldObject {
 			return spriteSheet.getFrame(0);
 		}
 
+		
+		var animationRunningLength = Std.int((haxe.Timer.stamp() - animationStart) * 1000);
+		
+		animationLoops = Std.int(animationRunningLength / cAnimation.totalLength);
+		if(animationInQueue != null && animationLoops > queueStartLoop) {
+			//if(animationRunningLength > cAnimation.totalLength) {
+				animationRunningLength -= cAnimation.totalLength;
+				cAnimation = spriteSheet.getAnimation(animationInQueue);
+				currentAnimation = animationInQueue;
+				animationInQueue = null;
+			//}
+		}
+
+		
 		var d = Std.int(cAnimation.to - cAnimation.from);
 		if(d == 0) {
 			return spriteSheet.getFrame(cAnimation.from);
 		}
 		
-		var cf = Std.int((haxe.Timer.stamp() - animationStart) * 1000) % cAnimation.totalLength;
+		var cf = animationRunningLength % cAnimation.totalLength;
 		
 		var totalTime = 0; 
 		for(f in 0...d + 1) {
@@ -54,17 +72,28 @@ class WorldObject {
 		return spriteSheet.frames[0];
 	}
 	
-	public function playAnimation(name:String) {
+	public function playAnimation(name:String, force:Bool = false) {
 		if(spriteSheet == null) {
 			return;
 		}
 		
-		if(currentAnimation == name) {
+		if(currentAnimation == name || animationInQueue == name) {
 			return;
 		}
 		
+		if(force || cAnimation == null) {
+			animationInQueue = null;
+			changeAnimation(name);
+		} else {
+			animationInQueue = name;
+			queueStartLoop = animationLoops;
+		}
+	}
+	
+	function changeAnimation(name:String) {
+		animationLoops = 0;
 		animationStart = haxe.Timer.stamp();
 		currentAnimation = name;
-		cAnimation = spriteSheet.getAnimation(name);
+		cAnimation = spriteSheet.getAnimation(name);	
 	}
 }

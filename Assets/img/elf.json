@@ -37,7 +37,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 5.ase": {
     "frame": { "x": 64, "y": 64, "w": 64, "h": 64 },
@@ -45,7 +45,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 6.ase": {
     "frame": { "x": 128, "y": 64, "w": 64, "h": 64 },
@@ -53,7 +53,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 7.ase": {
     "frame": { "x": 192, "y": 64, "w": 64, "h": 64 },
@@ -61,7 +61,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 8.ase": {
     "frame": { "x": 0, "y": 128, "w": 64, "h": 64 },
@@ -69,7 +69,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 9.ase": {
     "frame": { "x": 64, "y": 128, "w": 64, "h": 64 },
@@ -77,7 +77,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 10.ase": {
     "frame": { "x": 128, "y": 128, "w": 64, "h": 64 },
@@ -85,7 +85,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 11.ase": {
     "frame": { "x": 192, "y": 128, "w": 64, "h": 64 },
@@ -93,7 +93,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 12.ase": {
     "frame": { "x": 0, "y": 192, "w": 64, "h": 64 },
@@ -101,7 +101,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 13.ase": {
     "frame": { "x": 64, "y": 192, "w": 64, "h": 64 },
@@ -109,7 +109,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
-    "duration": 80
+    "duration": 70
    },
    "elf 14.ase": {
     "frame": { "x": 128, "y": 192, "w": 64, "h": 64 },
