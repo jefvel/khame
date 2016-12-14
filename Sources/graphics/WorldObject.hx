@@ -39,17 +39,14 @@ class WorldObject {
 			return spriteSheet.getFrame(0);
 		}
 
-		
-		var animationRunningLength = Std.int((haxe.Timer.stamp() - animationStart) * 1000);
+		var animationRunningLength = Std.int((kha.Scheduler.realTime() - animationStart) * 1000);
 		
 		animationLoops = Std.int(animationRunningLength / cAnimation.totalLength);
 		if(animationInQueue != null && animationLoops > queueStartLoop) {
-			//if(animationRunningLength > cAnimation.totalLength) {
-				animationRunningLength -= cAnimation.totalLength;
-				cAnimation = spriteSheet.getAnimation(animationInQueue);
-				currentAnimation = animationInQueue;
-				animationInQueue = null;
-			//}
+			animationRunningLength -= cAnimation.totalLength;
+			cAnimation = spriteSheet.getAnimation(animationInQueue);
+			currentAnimation = animationInQueue;
+			animationInQueue = null;
 		}
 
 		
@@ -61,6 +58,11 @@ class WorldObject {
 		var cf = animationRunningLength % cAnimation.totalLength;
 		
 		var totalTime = 0; 
+		
+		if(cAnimation.linearSpeed) {
+			return spriteSheet.frames[Std.int(cf / cAnimation.frameDuration) + cAnimation.from];
+		}
+		
 		for(f in 0...d + 1) {
 			var frame = spriteSheet.frames[f + cAnimation.from];
 			totalTime += frame.duration;
@@ -92,7 +94,7 @@ class WorldObject {
 	
 	function changeAnimation(name:String) {
 		animationLoops = 0;
-		animationStart = haxe.Timer.stamp();
+		animationStart = kha.Scheduler.realTime();
 		currentAnimation = name;
 		cAnimation = spriteSheet.getAnimation(name);	
 	}

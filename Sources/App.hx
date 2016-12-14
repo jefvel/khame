@@ -27,8 +27,11 @@ class App {
 	
 	var entity:graphics.WorldObject;
 	var guyTileSheet:kek.graphics.TileSheet;
+
+	var frameBuffer:kek.graphics.PostprocessingBuffer;
 	
 	public function new() {
+		frameBuffer = new kek.graphics.PostprocessingBuffer();
 		gameState = new game.GameState();
 		renderState = new graphics.RenderState(gameState);
 		worldPowers = new game.WorldPowers(gameState);
@@ -126,7 +129,7 @@ class App {
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
-			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.boom, kha.Assets.blobs.boom_json);
+			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
 			entity.spriteSheet = guyTileSheet;
 		});
 		
@@ -241,7 +244,7 @@ class App {
 		//gameState.playerY += (moveY) * 0.1;
 		
 		
-		var time = haxe.Timer.stamp();
+		var time = kha.Scheduler.realTime();
 		for(tree in objects.entityList) {
 			tree.rotation = Math.sin(tree.t + time) * 0.1;
 		}
@@ -301,18 +304,22 @@ class App {
 		entity.origin.y = 0 -  0.3* l * Math.abs(Math.sin(time * l));
 	}
 
-	function render(framebuffer: Framebuffer): Void {		
-		framebuffer.g4.clear(kha.Color.White, 1.0);
+	function render(framebuffer: Framebuffer): Void {
+		this.frameBuffer.begin(framebuffer);
+		this.frameBuffer.clear(kha.Color.White, 1.0);
+		
 		if(!gameState.loggedInOnFirebase) {
 			return;
 		}
 		
 		renderState.update(framebuffer);
-		chunks.render(framebuffer);
-		objects.render(framebuffer);
+		chunks.render(this.frameBuffer.graphics);
+		objects.render(this.frameBuffer.graphics);
 		
 		if(ui != null) {
 			ui.render(framebuffer);
 		}
+		
+		this.frameBuffer.end(framebuffer);
 	}
 }

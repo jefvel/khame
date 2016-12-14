@@ -65,7 +65,7 @@ class ChunkManager {
 		
 		unusedChunks = new Array<Chunk>();
 		
-		firstTime = haxe.Timer.stamp();
+		firstTime = kha.Scheduler.realTime();
 		
 		var bStructure = new kha.graphics4.VertexStructure();
 		bStructure.add("barycentric", VertexData.Float3);
@@ -181,9 +181,8 @@ class ChunkManager {
 	}
 	
 	var firstTime = 0.0;
-	public function render(framebuffer:kha.Framebuffer) {
-		var time = haxe.Timer.stamp() - firstTime;
-		var g4 = framebuffer.g4;
+	public function render(g4:kha.graphics4.Graphics) {
+		var time = kha.Scheduler.realTime() - firstTime;
 		
 		g4.begin();
 		g4.setPipeline(pipeline);

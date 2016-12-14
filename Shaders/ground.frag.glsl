@@ -11,7 +11,9 @@ uniform vec3 cursorPos;
 
 float edgeFactor(){
     vec3 d = fwidth(BC);
-    vec3 a3 = smoothstep(vec3(0.0), d*(1.95 - sin(worldPos.z + time) * cos(time * 2.0 + worldPos.z)), BC);
+    //d *= (.95 - sin(worldPos.z + time) * cos(time * 2.0 + worldPos.z));
+    d *= 0.5;
+    vec3 a3 = smoothstep(vec3(0.0), d, BC);
     return min(min(a3.x, a3.y), a3.z);
 }
 

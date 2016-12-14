@@ -47,7 +47,7 @@ class WorldObjects {
 	
 	public function new(g:game.GameState, rs:graphics.RenderState) {
 		renderState = rs;
-		firstTime = haxe.Timer.stamp();
+		firstTime = kha.Scheduler.realTime();
 		entityList = new Array<WorldObject>();
 		state = g;
 		pipeline = new PipelineState();
@@ -133,9 +133,8 @@ class WorldObjects {
 	}
 	
 	var aa = 0;
-	public function render(framebuffer:kha.Framebuffer) {
-		var time = haxe.Timer.stamp() - firstTime;
-		var g4 = framebuffer.g4;
+	public function render(g4:kha.graphics4.Graphics) {
+		var time = kha.Scheduler.realTime() - firstTime;
 		aa = Std.int(time * 16.0);
 		
 		g4.begin();
@@ -170,8 +169,11 @@ class WorldObjects {
 				}
 			
 			
-				g4.setTextureParameters(texLocation, TextureAddressing.Repeat, TextureAddressing.Repeat,
-				TextureFilter.PointFilter, TextureFilter.PointFilter, kha.graphics4.MipMapFilter.NoMipFilter);
+				g4.setTextureParameters(texLocation, 
+					TextureAddressing.Repeat, TextureAddressing.Repeat,
+					TextureFilter.PointFilter, TextureFilter.PointFilter,
+					kha.graphics4.MipMapFilter.NoMipFilter
+				);
 				
 				
 				if(object.spriteSheet == null) {

@@ -230,6 +230,14 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 50
+   },
+   "boom 29.ase": {
+    "frame": { "x": 160, "y": 96, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 50
    }
  },
  "meta": {
@@ -240,7 +248,7 @@
   "size": { "w": 256, "h": 128 },
   "scale": "1",
   "frameTags": [
-   { "name": "Explosion", "from": 0, "to": 28, "direction": "forward" }
+   { "name": "Explosion", "from": 0, "to": 29, "direction": "forward" }
   ],
   "layers": [
    { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
