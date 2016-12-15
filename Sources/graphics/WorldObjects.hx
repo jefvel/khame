@@ -31,6 +31,9 @@ class WorldObjects {
 	var rotationLocation:ConstantLocation;
 	var tileDataLocation:ConstantLocation;
 	
+	var screenResLocation:ConstantLocation;
+	var pixelSizeLocation:ConstantLocation;
+	
 	public var entityList:Array<WorldObject>;
 	
 	var state:game.GameState;
@@ -77,6 +80,9 @@ class WorldObjects {
 		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
 		rotationLocation = pipeline.getConstantLocation("rotation");
 		tileDataLocation = pipeline.getConstantLocation("tileData");
+		
+		screenResLocation = pipeline.getConstantLocation("screenRes");
+		pixelSizeLocation = pipeline.getConstantLocation("pixelSize");
 		
 		texLocation = pipeline.getTextureUnit("tex");
 		
@@ -149,6 +155,9 @@ class WorldObjects {
 		var tileData = new kha.math.FastVector4();
 		g4.setIndexBuffer(indexBuffer);
 		g4.setVertexBuffer(vertexBuffer);
+		
+		g4.setVector2(pixelSizeLocation, new kha.math.FastVector2(4, 4));
+		g4.setVector2(screenResLocation, new kha.math.FastVector2(renderState.screenWidth, renderState.screenHeight));
 		
 		
 		if(elfTex != null && treeTex != null){

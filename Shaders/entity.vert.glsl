@@ -13,6 +13,9 @@ uniform float time;
 
 uniform float rotation;
 
+uniform vec2 screenRes;
+uniform vec2 pixelSize;
+
 varying vec3 worldPos;
 varying vec2 UV;
 
@@ -28,7 +31,9 @@ void main() {
     UV = uv;
     vec4 wp = vec4(offset.xyz, 1.0);
     wp = camera * wp;
+    
     wp.xy += (rot * vec3(pos.xz - spriteOrigin, 0.0)).xy * scale.xy;
+    wp.xy -= mod(wp.xy * screenRes, pixelSize) / screenRes;
     
     gl_Position = perspective * wp;
     gl_Position.z -= 0.005;
