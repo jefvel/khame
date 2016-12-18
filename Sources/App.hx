@@ -34,6 +34,7 @@ class App {
 		frameBuffer = new kek.graphics.PostprocessingBuffer();
 		gameState = new game.GameState();
 		renderState = new graphics.RenderState(gameState);
+		renderState.frameBuffer = frameBuffer;
 		worldPowers = new game.WorldPowers(gameState);
 		ui = new game.UI(gameState);
 		
@@ -191,7 +192,7 @@ class App {
 		if(i == 1) {
 			var e = new graphics.WorldObject();
 			e.origin.y = 0.11;
-			e.scale.x = 1 + Math.random() * 2.0;
+			e.scale.x = 1.0;// + Math.random();
 			e.scale.y = e.scale.x;
 			
 			var p = new Vector3();
@@ -283,16 +284,20 @@ class App {
 
 		var hit = chunks.intersection(entity.position, direction);
 		if(hit != null) {
-			entity.origin.y = 0.1;
+			entity.origin.y = 1.0;
 			entity.position.z = hit.z;
 		}
 		
+		entity.origin.x = 0.5;
+		entity.origin.y = 0.0;
+		entity.rotation = 0.0;
+		
 		if(v.x > 0) {
-			entity.scale.x = 3.0;
+			entity.scale.x = 1.0;
 		}else if(v.x < 0) {
-			entity.scale.x = -3.0;
+			entity.scale.x = -1.0;
 		}
-		entity.scale.y = 3.0;
+		entity.scale.y = 1.0;
 		
 		renderState.cameraTargetPos.x = entity.position.x;
 		renderState.cameraTargetPos.y = entity.position.y;
@@ -300,8 +305,8 @@ class App {
 		
 		gameState.cameraX = gameState.playerX;
 		gameState.cameraY = gameState.playerY;
-		entity.rotation = l * 0.2 * Math.sin(time * l * 300.0);
-		entity.origin.y = 0 -  0.3* l * Math.abs(Math.sin(time * l));
+		//entity.rotation = l * 0.2 * Math.sin(time * l * 300.0);
+		//entity.origin.y = 0 -  0.3* l * Math.abs(Math.sin(time * l));
 	}
 
 	function render(framebuffer: Framebuffer): Void {
@@ -313,8 +318,8 @@ class App {
 		}
 		
 		renderState.update(framebuffer);
-		chunks.render(this.frameBuffer.graphics);
-		objects.render(this.frameBuffer.graphics);
+		chunks.render(this.frameBuffer);
+		objects.render(this.frameBuffer);
 		
 		if(ui != null) {
 			ui.render(framebuffer);

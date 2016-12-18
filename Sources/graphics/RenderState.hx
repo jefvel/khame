@@ -26,6 +26,7 @@ class RenderState {
 	public var screenHeight:Int;
 	public var mouseX:Int;
 	public var mouseY:Int;
+	public var frameBuffer:kek.graphics.PostprocessingBuffer;
 	
 	var state:game.GameState;
 	public function new(g:game.GameState) {

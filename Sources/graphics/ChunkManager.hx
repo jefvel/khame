@@ -181,10 +181,9 @@ class ChunkManager {
 	}
 	
 	var firstTime = 0.0;
-	public function render(g4:kha.graphics4.Graphics) {
+	public function render(g:kek.graphics.PostprocessingBuffer) {
 		var time = kha.Scheduler.realTime() - firstTime;
-		
-		g4.begin();
+		var g4 = g.graphics;
 		g4.setPipeline(pipeline);
 		g4.setMatrix(cameraLocation, renderState.cameraMatrix);
 		g4.setMatrix(perspectiveLocation, renderState.perspectiveMatrix);
@@ -230,7 +229,5 @@ class ChunkManager {
 				g4.drawIndexedVertices();
 			}
 		}
-		
-		g4.end();
 	}
 }
