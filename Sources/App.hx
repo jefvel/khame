@@ -130,7 +130,7 @@ class App {
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
-			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
+			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.present, kha.Assets.blobs.present_json);
 			entity.spriteSheet = guyTileSheet;
 		});
 		

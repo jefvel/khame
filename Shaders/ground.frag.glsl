@@ -12,7 +12,7 @@ uniform vec3 cursorPos;
 float edgeFactor(){
     vec3 d = fwidth(BC);
     //d *= (.95 - sin(worldPos.z + time) * cos(time * 2.0 + worldPos.z));
-    d *= 0.5;
+    d *= 0.8;
     vec3 a3 = smoothstep(vec3(0.0), d, BC);
     return min(min(a3.x, a3.y), a3.z);
 }
@@ -46,7 +46,7 @@ void main() {
     
     float d = distance(cursorPos, worldPos);
     d -= 0.8 + sin(time * 2.0) * 0.1;
-    d *= 50.0;
+    d *= 15.0;
     d = min(1.0, max(d, -1.0));
     d = 1.0 - abs(d);
 
