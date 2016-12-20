@@ -31,8 +31,7 @@ class WorldObjects {
 	var rotationLocation:ConstantLocation;
 	var tileDataLocation:ConstantLocation;
 	
-	var screenResLocation:ConstantLocation;
-	var pixelSizeLocation:ConstantLocation;
+	var screenDataLocation:ConstantLocation;
 	
 	public var entityList:Array<WorldObject>;
 	
@@ -80,9 +79,7 @@ class WorldObjects {
 		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
 		rotationLocation = pipeline.getConstantLocation("rotation");
 		tileDataLocation = pipeline.getConstantLocation("tileData");
-		
-		screenResLocation = pipeline.getConstantLocation("screenRes");
-		pixelSizeLocation = pipeline.getConstantLocation("pixelSize");
+		screenDataLocation = pipeline.getConstantLocation("screenData");
 		
 		texLocation = pipeline.getTextureUnit("tex");
 		
@@ -99,23 +96,24 @@ class WorldObjects {
 	
 	function generateMesh() {
 		var vStructure = new kha.graphics4.VertexStructure();
-		vStructure.add("pos", VertexData.Float3);
+		vStructure.add("pos", VertexData.Float2);
 		vStructure.add("uv", VertexData.Float2);
 		vertexBuffer = new VertexBuffer(4, vStructure, Usage.StaticUsage);
 		
 		var s = 1.0;
+		var m = 0.0;
 		
 		var verts = [
-			0.0, 0,   s,
+			m,   s,
 			0.0, 0.0,
 			
-			0.0, 0,   0.0,
+			m,   m,
 			0.0, 1.0,
 			
-			s,   0.0, 0.0,
+			s,   m,
 			1.0, 1.0,
 			
-			s,   0,   s,
+			s,   s,
 			1.0, 0.0
 		];
 		
@@ -138,27 +136,27 @@ class WorldObjects {
 		indexBuffer.unlock();
 	}
 	
-	var aa = 0;
-	public function render(g4:kha.graphics4.Graphics) {
+	public function render(g:kek.graphics.PostprocessingBuffer) {
+		var g4 = g.graphics;
 		var time = kha.Scheduler.realTime() - firstTime;
-		aa = Std.int(time * 16.0);
-		
-		g4.begin();
 		
 		g4.setPipeline(pipeline);
 		g4.setMatrix(cameraLocation, renderState.cameraMatrix);
 		g4.setMatrix(perspectiveLocation, renderState.perspectiveMatrix);
 		g4.setFloat(timeLocation, time);
 		
+		g4.setFloat4(screenDataLocation,
+			g.width, g.height,
+			g.pixelSize, g.pixelSize);
+			
 		var offset = new kha.math.FastVector3();
 		var hit:kha.math.Vector3 = null;
 		var tileData = new kha.math.FastVector4();
+		
 		g4.setIndexBuffer(indexBuffer);
 		g4.setVertexBuffer(vertexBuffer);
 		
-		g4.setVector2(pixelSizeLocation, new kha.math.FastVector2(4, 4));
-		g4.setVector2(screenResLocation, new kha.math.FastVector2(renderState.screenWidth, renderState.screenHeight));
-		
+		var spriteSize = new kha.math.FastVector2();
 		
 		if(elfTex != null && treeTex != null){
 			for(object in entityList) {
@@ -172,18 +170,18 @@ class WorldObjects {
 					switch(object.sprite) {
 						case Tree: 
 							g4.setTexture(texLocation, treeTex);
+							spriteSize.x = treeTex.width;
+							spriteSize.y = treeTex.height;
 						case Elf:
 							g4.setTexture(texLocation, elfTex);
 					}
 				}
-			
 			
 				g4.setTextureParameters(texLocation, 
 					TextureAddressing.Repeat, TextureAddressing.Repeat,
 					TextureFilter.PointFilter, TextureFilter.PointFilter,
 					kha.graphics4.MipMapFilter.NoMipFilter
 				);
-				
 				
 				if(object.spriteSheet == null) {
 					tileData.x = tileData.y = 0;
@@ -194,19 +192,30 @@ class WorldObjects {
 					tileData.y = t.uvy;
 					tileData.z = object.spriteSheet.tilesX;
 					tileData.w = object.spriteSheet.tilesY;
+					
+					spriteSize.x = t.w;
+					spriteSize.y = t.h;
 				}
 				
 				g4.setVector4(tileDataLocation, tileData);
 				
 				g4.setVector3(offsetLocation, offset);
-				g4.setVector2(scaleLocation, object.scale);
+				
+				spriteSize.x *= object.scale.x;
+				spriteSize.y *= object.scale.y;
+				/*
+				spriteSize.x *= g.pixelSize;
+				spriteSize.y *= g.pixelSize;
+				*/
+				g4.setVector2(scaleLocation, spriteSize);
 				g4.setVector2(textureOriginLocation, object.origin);
 				g4.setFloat(rotationLocation, object.rotation);
 				
 				g4.drawIndexedVertices();
 			}
 		}
-		g4.end();
+		
+		//g4.end();
 	}
 	
 	public function addObject(o:WorldObject) {

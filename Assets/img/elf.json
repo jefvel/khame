@@ -133,7 +133,8 @@
    { "name": "Pickup", "from": 14, "to": 14, "direction": "forward" }
   ],
   "layers": [
-   { "name": "Flattened", "opacity": 255, "blendMode": "normal" }
+   { "name": "Flattened", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
   ]
  }
 }

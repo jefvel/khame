@@ -10,11 +10,9 @@ project.targetOptions.html5.debugIndexTemplate = 'Templates/index.html';
 project.addAssets('Assets/**');
 
 project.addLibrary("haxe-firebase");
-
 project.addLibrary('kek');
 
 project.addShaders('Shaders');
-
 project.addSources('Sources');
 
 resolve(project);
