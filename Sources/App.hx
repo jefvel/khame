@@ -27,6 +27,7 @@ class App {
 	
 	var entity:graphics.WorldObject;
 	var guyTileSheet:kek.graphics.TileSheet;
+	var presentTileSheet:kek.graphics.TileSheet;
 
 	var frameBuffer:kek.graphics.PostprocessingBuffer;
 	
@@ -131,6 +132,11 @@ class App {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
 			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
+			
+			presentTileSheet = new kek.graphics.TileSheet(kha.Assets.images.present, kha.Assets.blobs.present_json);
+			presentTileSheet.getAnimation().looping = false;
+			presentTileSheet.getAnimation("Spawn").looping = false;
+			
 			entity.spriteSheet = guyTileSheet;
 		});
 		
@@ -200,7 +206,9 @@ class App {
 			
 			p = chunks.intersection(renderState.cameraPosition, p);
 			e.position = p;
+			e.spriteSheet = presentTileSheet;
 			e.t = Math.random() * 10.0;
+			e.playAnimation("Spawn");
 			objects.addObject(e);
 			
 			gameState.trees.push(new graphics.Tree(e.position.x, e.position.y, e.position.z, e.scale.x));
@@ -256,7 +264,7 @@ class App {
 			renderState.cursorWorldPosition.z -= 0.07;
 		}
 		
-		if(l < 0.4) {
+		if(l < 0.02) {
 			entity.playAnimation("Stand", true);
 		} else {
 			entity.playAnimation("Walk", true);

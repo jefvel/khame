@@ -70,17 +70,44 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 70
+   },
+   "present 9.ase": {
+    "frame": { "x": 32, "y": 64, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 70
+   },
+   "present 10.ase": {
+    "frame": { "x": 64, "y": 64, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 70
+   },
+   "present 11.ase": {
+    "frame": { "x": 96, "y": 64, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 1000
    }
  },
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.1.11",
-  "image": "D:\\projects\\khame\\Assets\\img\\present.png",
+  "image": "D:\\GameProjects\\khame\\Assets\\img\\present.png",
   "format": "RGBA8888",
   "size": { "w": 128, "h": 128 },
   "scale": "1",
   "frameTags": [
-   { "name": "Spawn", "from": 0, "to": 8, "direction": "forward" }
+   { "name": "Spawn", "from": 0, "to": 11, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
   ]
  }
 }

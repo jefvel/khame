@@ -48,9 +48,15 @@ class WorldObject {
 			currentAnimation = animationInQueue;
 			animationInQueue = null;
 		}
+		
 
 		
 		var d = Std.int(cAnimation.to - cAnimation.from);
+		
+		if(!cAnimation.looping && animationLoops > 0) {
+			return spriteSheet.frames[cAnimation.from + d];
+		}
+		
 		if(d == 0) {
 			return spriteSheet.getFrame(cAnimation.from);
 		}

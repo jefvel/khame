@@ -65,6 +65,8 @@ class RenderState {
 			FastVector3.fromVector3(eye), 
 			FastVector3.fromVector3(cameraTargetPos), 
 			FastVector3.fromVector3(up));
+			
+		fov = Math.atan((framebuffer.height * 0.5) / 500.0) * 2.0;
 		
 		perspectiveMatrix = kha.math.FastMatrix4.perspectiveProjection(fov, ratio, near, far);
 		
