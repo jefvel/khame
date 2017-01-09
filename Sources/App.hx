@@ -127,7 +127,7 @@ class App {
 				inited = true;
 			}
 		});
-		
+
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
@@ -197,7 +197,7 @@ class App {
 	function mouseDown(i:Int, x:Int, y:Int) {
 		if(i == 1) {
 			var e = new graphics.WorldObject();
-			e.origin.y = 0.11;
+			e.origin.y = 0.5;
 			e.scale.x = 1.0;// + Math.random();
 			e.scale.y = e.scale.x;
 			
@@ -214,6 +214,14 @@ class App {
 			gameState.trees.push(new graphics.Tree(e.position.x, e.position.y, e.position.z, e.scale.x));
 
 			return;
+		}
+		if(i == 2) {
+			if(kha.SystemImpl.isFullscreen()){
+				kha.SystemImpl.exitFullscreen();
+			}else{
+				kha.SystemImpl.requestFullscreen();
+
+			}
 		}
 		
 		gameState.addCredits();
@@ -270,7 +278,7 @@ class App {
 			entity.playAnimation("Walk", true);
 		}
 		
-		var speed = 0.1;
+		var speed = 0.06;
 		l *= 0.2;
 		
 		l = Math.min(l, speed);
@@ -330,7 +338,7 @@ class App {
 		objects.render(this.frameBuffer);
 		
 		if(ui != null) {
-			ui.render(framebuffer);
+			ui.render(this.frameBuffer);
 		}
 		
 		this.frameBuffer.end(framebuffer);

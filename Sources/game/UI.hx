@@ -24,8 +24,8 @@ class UI {
 		});
 	}
 	
-	public function render(f:kha.Framebuffer) {
-		var g2 = f.g2;
+	public function render(f:kek.graphics.PostprocessingBuffer) {
+		var g2 = f.getGraphics2();
 		return;
 		
 		g2.begin(false);
