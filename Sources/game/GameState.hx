@@ -9,7 +9,7 @@ class GameState {
 	public var loggedInOnFacebook:Bool;
 	public var loggedInOnFirebase:Bool;
 	
-	public var credits:Int;
+	public var credits:Int = -1;
 	
 	public var playerX:Float;
 	public var playerY:Float;
@@ -23,7 +23,9 @@ class GameState {
 	public var powerCounts:Map<game.WorldPowers.Faction, Int>;
 	public var trees:Array<graphics.Tree>;
 	
+	#if (sys_html5 || sys_debug_html5)
 	var playerRef:firebase.database.Reference;
+	#end
 	
 	public function new() {
 		trees = new Array<graphics.Tree>();
@@ -50,14 +52,17 @@ class GameState {
 	}
 	
 	inline function checkPlayerReference() {
+	#if (sys_html5 || sys_debug_html5)
 		if(playerRef == null) {
 			if(userId != null) {
 				playerRef = firebase.Firebase.database().ref('players/$userId');
 			}
 		}
+	#end
 	}
 	
 	public function loadState(?cb:GameState -> Void) {
+	#if (sys_html5 || sys_debug_html5)
 		checkPlayerReference();
 		if(playerRef != null) {
 			playerRef.once(Value).then(function(e){
@@ -94,9 +99,11 @@ class GameState {
 				}
 			});
 		}
+	#end
 	}
 	
 	public function saveState() {
+	#if (sys_html5 || sys_debug_html5)
 		checkPlayerReference();
 		
 		if(playerRef != null) {
@@ -111,5 +118,6 @@ class GameState {
 				trees: this.trees
 			});
 		}
+	#end
 	}
 }

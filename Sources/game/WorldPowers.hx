@@ -21,6 +21,7 @@ class WorldPowers {
 	}
 	
 	public function refreshPowers() {
+		#if (sys_html5 || sys_debug_html5)
 		if(gameState.loggedInOnFacebook) {
 			var postId = "";
 			
@@ -78,5 +79,6 @@ class WorldPowers {
 				
 			});
 		}
+		#end
 	}
 }

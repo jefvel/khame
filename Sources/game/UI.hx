@@ -25,7 +25,7 @@ class UI {
 	}
 	
 	public function render(f:kek.graphics.PostprocessingBuffer) {
-		var g2 = f.getGraphics2();
+		var g2 = f.g2;
 		return;
 		
 		g2.begin(false);
@@ -53,7 +53,7 @@ class UI {
 			// Credits
 			//////////////
 			var creditScaleIncrease = 0;
-			if(state.credits != null) {
+			if(state.credits >= 0) {
 				creditIncrease = ((state.credits - lastCredits) * 0.1);
 				lastCredits += creditIncrease;
 				creditScaleIncrease = Std.int(Math.min(Math.abs(creditIncrease) * 10.0, 10.0) * (1 + Math.random() * 0.4));

@@ -76,18 +76,24 @@ class Chunk {
 		load();
 	}
 	
+	#if (sys_debug_html5 || sys_html5)
 	var treeRef:firebase.database.Reference;
+	#end
 	public function unload() {
+	#if (sys_debug_html5 || sys_html5)
 		treeRef.off();
 		treeRef = null;
+	#end
 	}
 	
 	private function load() {
 		var id = chunkId();
+	#if (sys_debug_html5 || sys_html5)
 		treeRef = firebase.Firebase.database().ref('chunks/$id');
 		treeRef.on(firebase.EventType.Value, function(data, i){
 			var v = data.val();
 		});
+	#end
 	}
 	
 	public static inline function coordsToIndex(x:Int, y:Int) {
@@ -110,10 +116,6 @@ class Chunk {
 	var v3:Vector3 = new Vector3();
 	public inline function getLocalHeight(x:Int, y:Int) {
 		var h = heights[x + y * CHUNK_VERTS_X];
-		if(h == null) {
-			return 0.0;
-		}
-		
 		return h;
 	}
 	

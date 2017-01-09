@@ -11,7 +11,9 @@ class App {
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
 	
+	#if (sys_html5 || sys_debug_html5)
 	var user:firebase.User;
+	#end
 	
 	var font:kha.Font;
 	var ui:game.UI;
@@ -53,6 +55,7 @@ class App {
 		
 		mouse = kha.input.Mouse.get();
 		
+		#if (sys_html5 || sys_debug_html5)
 		var config = {
 			apiKey: "AIzaSyDNW3ithvOf417WyzGUJl5bY30S7B_IH98",
 			authDomain: "christmas2016-2e122.firebaseapp.com",
@@ -70,7 +73,7 @@ class App {
 			
 			#if sys_debug_html5
 				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
-			#else
+			#else if sys_html5
 				var authProvider = new firebase.auth.FacebookAuthProvider();
 				authProvider.addScope("public_profile,user_posts");
 				app.auth().signInWithRedirect(authProvider);
@@ -127,6 +130,7 @@ class App {
 				inited = true;
 			}
 		});
+		#end
 
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
@@ -156,6 +160,7 @@ class App {
 	}
 	
 	function updateAvatar() {
+		#if (sys_html5 || sys_debug_html5)
 		if(gameState.userName != null) {
 			var avatarUrl;
 			var userName = gameState.userName;
@@ -167,6 +172,7 @@ class App {
 			
 			ui.loadAvatar(avatarUrl);
 		}
+		#end
 	}
 	
 	var friction:Float = 0.9;
@@ -288,9 +294,11 @@ class App {
 		gameState.playerX += v.x;
 		gameState.playerY += v.y;
 		
+		#if (sys_debug_html5 || sys_html5)
 		if(!gameState.loggedInOnFirebase) {
 			return;
 		}
+		#end
 		
 		entity.position.x = gameState.playerX;
 		entity.position.y = gameState.playerY;
@@ -329,9 +337,11 @@ class App {
 		this.frameBuffer.begin(framebuffer);
 		this.frameBuffer.clear(kha.Color.White, 1.0);
 		
+		#if (sys_html5 || sys_debug_html5)
 		if(!gameState.loggedInOnFirebase) {
 			return;
 		}
+		#end
 		
 		renderState.update(framebuffer);
 		chunks.render(this.frameBuffer);
