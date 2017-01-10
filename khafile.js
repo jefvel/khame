@@ -7,7 +7,9 @@ project.targetOptions.android.package = 'com.jefvel.coolgame';
 project.targetOptions.html5.indexTemplate = 'Templates/index.html';
 project.targetOptions.html5.debugIndexTemplate = 'Templates/index.html';
 
-project.addParameter('-dce full');
+if(platform == Platform.HTML5) {
+    project.addParameter('-dce full');
+}
 
 project.addAssets('Assets/**');
 

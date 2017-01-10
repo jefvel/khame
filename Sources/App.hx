@@ -138,7 +138,6 @@ class App {
 			guyTileSheet = new kek.graphics.TileSheet(kha.Assets.images.elf, kha.Assets.blobs.elf_json);
 			
 			presentTileSheet = new kek.graphics.TileSheet(kha.Assets.images.present, kha.Assets.blobs.present_json);
-			presentTileSheet.getAnimation().looping = false;
 			presentTileSheet.getAnimation("Spawn").looping = false;
 			
 			entity.spriteSheet = guyTileSheet;
