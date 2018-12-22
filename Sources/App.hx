@@ -50,7 +50,7 @@ class App {
 		objects.addObject(entity);
 		
 		springs = new SpringSystem();
-		System.notifyOnRender(render);
+		System.notifyOnFrames(render);
 		Scheduler.addFrameTask(update, 0);
 		
 		mouse = kha.input.Mouse.get();
@@ -73,7 +73,7 @@ class App {
 			
 			#if sys_debug_html5
 				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
-			#else if sys_html5
+			#elseif sys_html5
 				var authProvider = new firebase.auth.FacebookAuthProvider();
 				authProvider.addScope("public_profile,user_posts");
 				app.auth().signInWithRedirect(authProvider);
@@ -143,9 +143,9 @@ class App {
 			entity.spriteSheet = guyTileSheet;
 		});
 		
-		kha.input.Keyboard.get().notify(function(k, d) {
+		kha.input.Keyboard.get().notify(function(k) {
 			keydown = true;
-		}, function(k, up) {
+		}, function(k) {
 			keydown = false;
 		});
 		
@@ -219,14 +219,6 @@ class App {
 			gameState.trees.push(new graphics.Tree(e.position.x, e.position.y, e.position.z, e.scale.x));
 
 			return;
-		}
-		if(i == 2) {
-			if(kha.SystemImpl.isFullscreen()){
-				kha.SystemImpl.exitFullscreen();
-			}else{
-				kha.SystemImpl.requestFullscreen();
-
-			}
 		}
 		
 		gameState.addCredits();
@@ -332,7 +324,8 @@ class App {
 		//entity.origin.y = 0 -  0.3* l * Math.abs(Math.sin(time * l));
 	}
 
-	function render(framebuffer: Framebuffer): Void {
+	function render(framebuffers: Array<Framebuffer>): Void {
+		var framebuffer = framebuffers[0];
 		this.frameBuffer.begin(framebuffer);
 		this.frameBuffer.clear(kha.Color.White, 1.0);
 		

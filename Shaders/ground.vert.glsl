@@ -1,8 +1,9 @@
+#version 450
 precision mediump float;
 
-attribute vec3 pos;
-attribute vec3 normal;
-attribute vec3 barycentric;
+layout(location = 1) in vec3 pos;
+layout(location = 2) in vec3 normal;
+layout(location = 3) in vec3 barycentric;
 
 uniform vec2 offset;
 uniform mat4 camera;
@@ -10,9 +11,9 @@ uniform mat4 perspective;
 
 uniform float time;
 
-varying vec3 worldPos;
-varying vec3 BC;
-varying vec3 NC;
+out vec3 worldPos;
+out vec3 BC;
+out vec3 NC;
 
 void main() {
     NC = normal;
@@ -24,5 +25,4 @@ void main() {
     worldPos = wp.xyz;
     
     gl_Position = perspective * camera * wp;
-    
 }

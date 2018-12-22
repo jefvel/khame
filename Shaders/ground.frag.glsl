@@ -1,13 +1,16 @@
+#version 450
 precision mediump float;
 
 #extension GL_OES_standard_derivatives : enable
-varying vec3 BC;
-varying vec3 NC;
+in vec3 BC;
+in vec3 NC;
 
 uniform float time;
 
-varying vec3 worldPos;
+in vec3 worldPos;
 uniform vec3 cursorPos;
+
+out vec4 FragColor;
 
 float edgeFactor(){
     vec3 d = fwidth(BC);
@@ -40,9 +43,9 @@ void main() {
     
     vec3 c = mix(color, color2, 0.5 + t);
     c = vec3(0.8, 0.86, 0.96);
-    gl_FragColor = vec4(mix(c, vec3(241.0 / 256.0, 238.0 / 256.0, 238.0 / 256.0), edgeFactor()), 1.0);
+    FragColor = vec4(mix(c, vec3(241.0 / 256.0, 238.0 / 256.0, 238.0 / 256.0), edgeFactor()), 1.0);
     vec3 lightDirection = -normalize(vec3(-1, -1, -1));
-    gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(78.0 / 256.0, 142.0 / 256.0 , 190.0 / 256.0), 0.1 + smoothstep(dot(lightDirection, NC), 0.1, 0.5) * 0.8);
+    FragColor.rgb = mix(FragColor.rgb, vec3(78.0 / 256.0, 142.0 / 256.0 , 190.0 / 256.0), 0.1 + smoothstep(dot(lightDirection, NC), 0.1, 0.5) * 0.8);
     
     float d = distance(cursorPos, worldPos);
     d -= 0.8 + sin(time * 2.0) * 0.1;
@@ -50,5 +53,5 @@ void main() {
     d = min(1.0, max(d, -1.0));
     d = 1.0 - abs(d);
 
-    gl_FragColor.rgb -= vec3(0.5) * d;
+    FragColor.rgb -= vec3(0.5) * d;
 }

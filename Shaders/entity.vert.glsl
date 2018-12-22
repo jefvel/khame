@@ -1,7 +1,8 @@
+#version 450
 precision mediump float;
 
-attribute vec2 pos;
-attribute vec2 uv;
+layout(location = 1) in vec2 pos;
+layout(location = 2) in vec2 uv;
 
 uniform vec2 scale;
 uniform vec2 spriteOrigin;
@@ -18,8 +19,8 @@ uniform float rotation;
 uniform vec2 screenRes;
 uniform vec2 pixelSize;
 
-varying vec3 worldPos;
-varying vec2 UV;
+out vec3 worldPos;
+out vec2 UV;
 
 void main() {
     // Construct 2d rotation matrix (around z axis)
