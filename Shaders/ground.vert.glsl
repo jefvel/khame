@@ -1,9 +1,9 @@
 #version 450
 precision mediump float;
 
-layout(location = 1) in vec3 pos;
-layout(location = 2) in vec3 normal;
-layout(location = 3) in vec3 barycentric;
+in vec3 pos;
+in vec3 normal;
+in vec3 barycentric;
 
 uniform vec2 offset;
 uniform mat4 camera;

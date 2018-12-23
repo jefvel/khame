@@ -47,7 +47,7 @@ class RenderState {
 		screenWidth = framebuffer.width;
 		screenHeight = framebuffer.height;
 		
-		var eye = new Vector3(0.0, 0.0, 15);
+		var eye = new Vector3(0.0, 0.0, 25);
 		var dir = new Vector3(0, 8, 0);
 		var up = new Vector3(0, 0, 1.0);
 		
@@ -60,7 +60,7 @@ class RenderState {
 		cameraPosition.x = eye.x;
 		cameraPosition.y = eye.y;
 		cameraPosition.z = eye.z;
-		
+
 		cameraMatrix = kha.math.FastMatrix4.lookAt(
 			FastVector3.fromVector3(eye), 
 			FastVector3.fromVector3(cameraTargetPos), 

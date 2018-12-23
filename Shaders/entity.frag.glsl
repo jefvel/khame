@@ -1,7 +1,6 @@
 #version 450
 precision mediump float;
 
-uniform float time;
 in vec3 worldPos;
 
 uniform sampler2D tex;

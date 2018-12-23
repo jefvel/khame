@@ -24,7 +24,6 @@ class WorldObjects {
 	var perspective:kha.math.FastMatrix4;
 	var perspectiveLocation:ConstantLocation;
 	
-	var timeLocation:ConstantLocation;
 	var offsetLocation:ConstantLocation;
 	var scaleLocation:ConstantLocation;
 	var textureOriginLocation:ConstantLocation;
@@ -73,7 +72,6 @@ class WorldObjects {
 		cameraLocation = pipeline.getConstantLocation("camera");
 		perspectiveLocation = pipeline.getConstantLocation("perspective");
 		
-		timeLocation = pipeline.getConstantLocation("time");
 		offsetLocation = pipeline.getConstantLocation("offset");
 		scaleLocation = pipeline.getConstantLocation("scale");
 		textureOriginLocation = pipeline.getConstantLocation("spriteOrigin");
@@ -143,7 +141,6 @@ class WorldObjects {
 		g4.setPipeline(pipeline);
 		g4.setMatrix(cameraLocation, renderState.cameraMatrix);
 		g4.setMatrix(perspectiveLocation, renderState.perspectiveMatrix);
-		g4.setFloat(timeLocation, time);
 		
 		g4.setFloat4(screenDataLocation,
 			g.width, g.height,

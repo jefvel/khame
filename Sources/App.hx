@@ -11,16 +11,11 @@ class App {
 	var springs:SpringSystem;
 	var mouse:kha.input.Mouse;
 	
-	#if (sys_html5 || sys_debug_html5)
-	var user:firebase.User;
-	#end
-	
 	var font:kha.Font;
 	var ui:game.UI;
 	
 	var gameState:game.GameState;
 	var renderState:graphics.RenderState;
-	var worldPowers:game.WorldPowers;
 	
 	var chunks:graphics.ChunkManager;
 	var objects:graphics.WorldObjects;
@@ -38,7 +33,6 @@ class App {
 		gameState = new game.GameState();
 		renderState = new graphics.RenderState(gameState);
 		renderState.frameBuffer = frameBuffer;
-		worldPowers = new game.WorldPowers(gameState);
 		ui = new game.UI(gameState);
 		
 		chunks = new graphics.ChunkManager(gameState, renderState);
@@ -55,83 +49,6 @@ class App {
 		
 		mouse = kha.input.Mouse.get();
 		
-		#if (sys_html5 || sys_debug_html5)
-		var config = {
-			apiKey: "AIzaSyDNW3ithvOf417WyzGUJl5bY30S7B_IH98",
-			authDomain: "christmas2016-2e122.firebaseapp.com",
-			databaseURL: "https://christmas2016-2e122.firebaseio.com",
-			storageBucket: "christmas2016-2e122.appspot.com",
-			messagingSenderId: "819275584692"
-		};
-		
-		var app = firebase.Firebase.initializeApp(config);
-		
-		firebase.Firebase.auth().onAuthStateChanged(function(user) {
-			this.user = user;
-			
-			if(this.user == null) {
-			
-			#if sys_debug_html5
-				app.auth().signInWithEmailAndPassword("test@test.com", "testtest");
-			#elseif sys_html5
-				var authProvider = new firebase.auth.FacebookAuthProvider();
-				authProvider.addScope("public_profile,user_posts");
-				app.auth().signInWithRedirect(authProvider);
-			#end
-			
-			} else {
-				facebook.FB.init({
-					appId      : '96688622773',
-					xfbml      : true,
-					version    : 'v2.8',
-					cookie: true,
-				});
-				
-				facebook.FB.getLoginStatus(function(e) {
-					if(e.status == 'connected') {
-						gameState.loggedInOnFacebook = true;
-						worldPowers.refreshPowers();
-					} else {
-						gameState.loggedInOnFacebook = false;
-					}
-				});
-				
-				gameState.userId = user.uid;
-				
-				if(user.displayName != null) {
-					gameState.userName = user.displayName;
-				}else{
-					gameState.userName = generateName();
-				}
-				
-				gameState.loadState(function(data) {
-					for(tree in data.trees) {
-						var e = new graphics.WorldObject();
-						
-						e.origin.y = 0.11;
-						e.scale.x = tree.size;
-						e.scale.y = tree.size;
-						
-						e.position.x = tree.x;
-						e.position.y = tree.y;
-						e.position.z = tree.z;
-						
-						e.t = Math.random() * 10.0;
-						objects.addObject(e);
-					}
-				});
-				
-				updateAvatar();
-				
-				if(!inited){
-					mouse.notify(mouseDown, mouseUp, mouseMove, null);
-				}
-				
-				inited = true;
-			}
-		});
-		#end
-
 		kha.Assets.loadEverything(function() {
 			this.font = kha.Assets.fonts.Archive;
 			ui.setFont(this.font);
@@ -141,6 +58,12 @@ class App {
 			presentTileSheet.getAnimation("Spawn").looping = false;
 			
 			entity.spriteSheet = guyTileSheet;
+
+			if(!inited){
+				mouse.notify(mouseDown, mouseUp, mouseMove, null);
+			}
+			
+			inited = true;
 		});
 		
 		kha.input.Keyboard.get().notify(function(k) {
@@ -149,30 +72,9 @@ class App {
 			keydown = false;
 		});
 		
-		updateAvatar();
 	}
 	
 	var keydown = false;
-	
-	function generateName() {
-		return "Elf Boy";
-	}
-	
-	function updateAvatar() {
-		#if (sys_html5 || sys_debug_html5)
-		if(gameState.userName != null) {
-			var avatarUrl;
-			var userName = gameState.userName;
-			avatarUrl = 'https://api.adorable.io/avatars/64/$userName.io';
-			
-			if(user.photoURL != null) {
-				avatarUrl = user.photoURL;
-			}
-			
-			ui.loadAvatar(avatarUrl);
-		}
-		#end
-	}
 	
 	var friction:Float = 0.9;
 	var firstdown:Bool = false;
@@ -257,7 +159,6 @@ class App {
 		//gameState.playerX -= (moveX) * 0.1;
 		//gameState.playerY += (moveY) * 0.1;
 		
-		
 		var time = kha.Scheduler.realTime();
 		for(tree in objects.entityList) {
 			tree.rotation = Math.sin(tree.t + time) * 0.1;
@@ -284,12 +185,6 @@ class App {
 		
 		gameState.playerX += v.x;
 		gameState.playerY += v.y;
-		
-		#if (sys_debug_html5 || sys_html5)
-		if(!gameState.loggedInOnFirebase) {
-			return;
-		}
-		#end
 		
 		entity.position.x = gameState.playerX;
 		entity.position.y = gameState.playerY;
@@ -328,12 +223,6 @@ class App {
 		var framebuffer = framebuffers[0];
 		this.frameBuffer.begin(framebuffer);
 		this.frameBuffer.clear(kha.Color.White, 1.0);
-		
-		#if (sys_html5 || sys_debug_html5)
-		if(!gameState.loggedInOnFirebase) {
-			return;
-		}
-		#end
 		
 		renderState.update(framebuffer);
 		chunks.render(this.frameBuffer);

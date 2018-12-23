@@ -13,7 +13,6 @@ if(platform == Platform.HTML5) {
 
 project.addAssets('Assets/**');
 
-project.addLibrary("haxe-firebase");
 project.addLibrary('kek');
 
 project.addShaders('Shaders');

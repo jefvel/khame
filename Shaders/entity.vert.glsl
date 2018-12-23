@@ -1,8 +1,8 @@
 #version 450
 precision mediump float;
 
-layout(location = 1) in vec2 pos;
-layout(location = 2) in vec2 uv;
+in vec2 pos;
+in vec2 uv;
 
 uniform vec2 scale;
 uniform vec2 spriteOrigin;
@@ -11,8 +11,6 @@ uniform mat4 camera;
 uniform mat4 perspective;
 
 uniform vec4 screenData;
-
-uniform float time;
 
 uniform float rotation;
 

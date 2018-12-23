@@ -223,9 +223,7 @@ class ChunkManager {
 				offset.x = chunk.worldX;
 				offset.y = chunk.worldY;
 				g4.setVector2(offsetLocation, offset);
-				
 				g4.setVertexBuffers(chunk.buffers);
-				
 				g4.drawIndexedVertices();
 			}
 		}

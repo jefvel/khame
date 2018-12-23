@@ -1,7 +1,7 @@
 #version 450
 precision mediump float;
 
-#extension GL_OES_standard_derivatives : enable
+//#extension GL_OES_standard_derivatives : enable
 in vec3 BC;
 in vec3 NC;
 
